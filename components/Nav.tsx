@@ -25,15 +25,17 @@ export default function Nav() {
       >
         Riss Creative
       </Link>
-      <div className="pointer-events-auto flex gap-5 md:gap-6 font-sans text-[12px] md:text-[13px] text-muted">
+      <div className="pointer-events-auto flex gap-5 md:gap-6 font-sans text-[12px] md:text-[13px]">
         {navItems.map((item) => {
           const active = pathname === item.href;
+          const isSubmit = item.href === "/submit";
+          const base = isSubmit ? "text-foreground" : "text-muted";
           return (
             <Link
               key={item.href}
               href={item.href}
               className={`transition-opacity duration-300 hover:opacity-60 hover:text-foreground ${
-                active ? "text-foreground" : ""
+                active ? "text-foreground" : base
               }`}
             >
               {item.label}
