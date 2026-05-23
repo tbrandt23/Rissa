@@ -23,12 +23,36 @@ export default function HomePage() {
               {homeCopy.descriptorAccent}
             </span>
           </p>
-          <Link
-            href="/submit"
-            className="mt-8 md:mt-10 inline-flex items-center gap-2 text-[10px] md:text-[11px] uppercase tracking-[0.25em] text-muted transition-colors duration-300 hover:text-foreground"
-          >
-            now accepting loop submissions <span aria-hidden>→</span>
-          </Link>
+          <div className="mt-10 md:mt-14 flex flex-col md:flex-row gap-5 md:gap-10">
+            <Link
+              href="/links"
+              className="group inline-flex items-baseline gap-3 text-foreground transition-opacity duration-300 hover:opacity-60"
+            >
+              <span className="text-[10px] uppercase tracking-[0.3em] text-muted group-hover:text-foreground transition-colors duration-300">
+                01
+              </span>
+              <span className="font-display font-light text-[20px] md:text-[24px] tracking-[-0.01em]">
+                Links
+              </span>
+              <span aria-hidden className="text-muted group-hover:text-foreground transition-colors duration-300">
+                →
+              </span>
+            </Link>
+            <Link
+              href="/submit"
+              className="group inline-flex items-baseline gap-3 text-foreground transition-opacity duration-300 hover:opacity-60"
+            >
+              <span className="text-[10px] uppercase tracking-[0.3em] text-muted group-hover:text-foreground transition-colors duration-300">
+                02
+              </span>
+              <span className="font-display font-light text-[20px] md:text-[24px] tracking-[-0.01em]">
+                Send loops
+              </span>
+              <span aria-hidden className="text-muted group-hover:text-foreground transition-colors duration-300">
+                →
+              </span>
+            </Link>
+          </div>
         </div>
 
         {/* scroll prompt — stitches into the work below */}
