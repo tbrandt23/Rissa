@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Riss Creative · Visual Reference</title>
+
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@200,300,400,500,700&f[]=satoshi@300,400,500&display=swap" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,300&display=swap" />
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    --background: #0A0A0A;
+    --foreground: #EDEAE3;
+    --foreground-cool: #E8E6E0;
+    --muted: #6B6862;
+    --border: #1F1E1B;
+    --border-soft: #14130F;
+  }
+
+  /* film grain overlay — the printed-not-rendered move */
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' /%3E%3C/svg%3E");
+  }
+
+  /* the one italic accent — Fraunces */
+  .accent-italic {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  html, body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 300;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    padding: 0 24px;
+    overflow-x: hidden;
+  }
+
+  @media (min-width: 768px) {
+    body { padding: 0 48px; }
+  }
+
+  /* ────────────────────────────────────────
+     LAYOUT
+     ──────────────────────────────────────── */
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .section {
+    padding: 96px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-of-type { border-bottom: none; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .section-num {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .section-title {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 200;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+  }
+
+  /* ────────────────────────────────────────
+     HERO
+     ──────────────────────────────────────── */
+
+  .hero {
+    padding: 120px 0 96px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-caption {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .hero-title {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 200;
+    font-size: clamp(48px, 9vw, 112px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 24px;
+  }
+
+  .hero-sub {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 560px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+
+  /* ────────────────────────────────────────
+     COLOR SWATCHES
+     ──────────────────────────────────────── */
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  @media (min-width: 640px) {
+    .swatch-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .swatch {
+    background: var(--background);
+    padding: 32px 24px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .swatch-chip {
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .swatch-name {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .swatch-hex {
+    font-family: 'Satoshi', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .swatch-role {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-soft);
+  }
+
+  /* ────────────────────────────────────────
+     TYPOGRAPHY SAMPLES
+     ──────────────────────────────────────── */
+
+  .type-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (min-width: 768px) {
+    .type-row { grid-template-columns: 140px 1fr; gap: 32px; align-items: baseline; }
+  }
+
+  .type-meta {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    padding-top: 12px;
+  }
+
+  .type-meta-class {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    color: var(--foreground);
+    opacity: 0.7;
+    margin-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+  }
+
+  .display-xl {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 200;
+    font-size: clamp(40px, 7vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .display-l {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 200;
+    font-size: 40px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .display-m {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  .body-text {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--foreground);
+  }
+
+  .caption-text {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+  }
+
+  /* ────────────────────────────────────────
+     COMPONENT EXAMPLES
+     ──────────────────────────────────────── */
+
+  .component {
+    margin-bottom: 64px;
+  }
+
+  .component-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .component-frame {
+    background: var(--background);
+    padding: 32px 24px;
+    border: 1px solid var(--border);
+  }
+
+  /* Nav example */
+  .nav-example {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+  }
+
+  .nav-wordmark {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .nav-links span {
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links span:hover { color: var(--foreground); }
+
+  /* Link row example */
+  .link-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+
+  .link-row:hover { opacity: 0.6; }
+  .link-row:last-child { border-bottom: none; }
+
+  .link-platform {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  .link-handle {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Form field */
+  .form-field {
+    margin-bottom: 32px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+    color: var(--foreground);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-input::placeholder {
+    color: var(--muted);
+  }
+
+  .form-input:focus {
+    border-bottom-color: var(--foreground);
+  }
+
+  /* Dropzone */
+  .dropzone {
+    border: 1px dashed var(--border);
+    padding: 64px 24px;
+    text-align: center;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+  }
+
+  .dropzone:hover {
+    border-color: var(--muted);
+  }
+
+  .dropzone-text {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .dropzone-meta {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+
+  /* Submit button */
+  .submit-btn {
+    background: transparent;
+    border: none;
+    color: var(--foreground);
+    font-family: 'Satoshi', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .submit-btn:hover { opacity: 0.6; }
+
+  /* Capability section example */
+  .capability {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+
+  @media (min-width: 768px) {
+    .capability.diptych { grid-template-columns: 1fr 1fr; }
+    .capability.split { grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: center; }
+  }
+
+  .image-placeholder {
+    background: linear-gradient(135deg, #1A1916 0%, #0F0E0C 100%);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+  }
+
+  .image-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(237, 234, 227, 0.04) 0%, transparent 50%);
+  }
+
+  .image-placeholder.ratio-4-5 { aspect-ratio: 4 / 5; }
+  .image-placeholder.ratio-3-4 { aspect-ratio: 3 / 4; }
+  .image-placeholder.ratio-square { aspect-ratio: 1 / 1; }
+  .image-placeholder.ratio-video { aspect-ratio: 16 / 9; }
+
+  .image-label {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+  }
+
+  .image-label span {
+    display: block;
+    color: var(--foreground);
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    margin-top: 8px;
+  }
+
+  .capability-text h3 {
+    font-family: 'Cabinet Grotesk', sans-serif;
+    font-weight: 200;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .capability-text p {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 380px;
+    line-height: 1.55;
+  }
+
+  /* ────────────────────────────────────────
+     PRINCIPLES
+     ──────────────────────────────────────── */
+
+  .principles {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  @media (min-width: 768px) {
+    .principles { grid-template-columns: 1fr 1fr; }
+  }
+
+  .principle {
+    background: var(--background);
+    padding: 40px 32px;
+  }
+
+  .principle.do .principle-tag {
+    color: var(--foreground);
+  }
+
+  .principle.dont .principle-tag {
+    color: var(--muted);
+  }
+
+  .principle-tag {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    margin-bottom: 24px;
+  }
+
+  .principle ul {
+    list-style: none;
+  }
+
+  .principle li {
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.6;
+    padding: 12px 0;
+    color: var(--foreground);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+  }
+
+  .principle.dont li {
+    color: var(--muted);
+  }
+
+  .principle li:last-child { border-bottom: none; }
+
+  .principle li::before {
+    content: '—';
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* ────────────────────────────────────────
+     FOOTER
+     ──────────────────────────────────────── */
+
+  .footer {
+    padding: 48px 0 64px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* utility */
+  .stack-32 > * + * { margin-top: 32px; }
+
+</style>
+</head>
+
+<body>
+  <!-- Film grain overlay — site-wide texture move -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- HOMEPAGE COMPOSITION PREVIEW (the off-center magazine-cover move) -->
+  <section style="height: 100vh; min-height: 600px; position: relative; border-bottom: 1px solid var(--border); padding: 32px 24px;">
+    <!-- top-right metadata -->
+    <div style="position: absolute; top: 32px; right: 32px; font-family: 'Satoshi', sans-serif; font-size: 11px; letter-spacing: 0.15em; color: var(--muted); text-align: right;">
+      riss creative &nbsp;/&nbsp; los angeles &nbsp;/&nbsp; est. 2024
+    </div>
+
+    <!-- top-left tiny label so the user knows what they're looking at -->
+    <div style="position: absolute; top: 32px; left: 32px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em; color: var(--muted);">
+      Home / preview
+    </div>
+
+    <!-- lower-left wordmark + descriptor -->
+    <div style="position: absolute; bottom: 10vh; left: 32px; right: 32px;">
+      <h1 style="font-family: 'Cabinet Grotesk', sans-serif; font-weight: 200; font-size: clamp(56px, 12vw, 140px); line-height: 0.9; letter-spacing: -0.04em; margin-bottom: 16px; color: var(--foreground);">Riss Creative</h1>
+      <p style="font-family: 'Satoshi', sans-serif; font-weight: 300; font-size: clamp(15px, 2vw, 19px); color: var(--foreground-cool); max-width: 520px;">
+        creative direction, styling, &amp; <span class="accent-italic" style="font-size: 1.05em;">curation.</span>
+      </p>
+    </div>
+  </section>
+
+  <div class="wrap">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-caption">Visual Reference · v1</div>
+      <h1 class="hero-title">Visual Language</h1>
+      <p class="hero-sub">A working reference for the personal site. Dark, warm, editorial — with three deliberate moves that pull the design out of the AI-default zone: <span class="accent-italic">an</span> off-center composition, a single italic serif accent, and a fine film grain across every surface.</p>
+      <div class="hero-meta">
+        <span>Internal Reference</span>
+        <span>·</span>
+        <span>May 2026</span>
+        <span>·</span>
+        <span>Confidential</span>
+      </div>
+    </header>
+
+    <!-- COLOR -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Color</h2>
+      </div>
+
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div>
+            <div class="swatch-chip" style="background: #0A0A0A;"></div>
+            <div class="swatch-name">Background</div>
+            <div class="swatch-hex">#0A0A0A</div>
+          </div>
+          <div class="swatch-role">Near-black · warm undertone</div>
+        </div>
+        <div class="swatch">
+          <div>
+            <div class="swatch-chip" style="background: #EDEAE3;"></div>
+            <div class="swatch-name">Foreground</div>
+            <div class="swatch-hex">#EDEAE3</div>
+          </div>
+          <div class="swatch-role">Off-white · editorial</div>
+        </div>
+        <div class="swatch">
+          <div>
+            <div class="swatch-chip" style="background: #6B6862;"></div>
+            <div class="swatch-name">Muted</div>
+            <div class="swatch-hex">#6B6862</div>
+          </div>
+          <div class="swatch-role">Warm grey · secondary text</div>
+        </div>
+      </div>
+
+      <p class="body-text" style="margin-top: 32px; color: var(--muted); max-width: 580px;">No chromatic accents. The accent <em>is</em> the off-white against the near-black. Any blue, green, or vivid color breaks the language immediately.</p>
+    </section>
+
+    <!-- TYPOGRAPHY -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Typography</h2>
+      </div>
+
+      <div class="stack-32" style="margin-bottom: 48px;">
+        <p class="body-text" style="color: var(--muted); max-width: 580px;">Cabinet Grotesk for display (extralight + light). Satoshi for body (light). Both from Fontshare. The combination reads editorial-fashion rather than tech-startup — exactly the differentiation needed.</p>
+      </div>
+
+      <div class="type-row">
+        <div>
+          <div class="type-meta-class">DISPLAY XL</div>
+          <div class="type-meta">Cabinet · 200</div>
+        </div>
+        <div class="display-xl">Riss Creative</div>
+      </div>
+
+      <div class="type-row">
+        <div>
+          <div class="type-meta-class">DISPLAY L</div>
+          <div class="type-meta">Cabinet · 200</div>
+        </div>
+        <div class="display-l">Send Files</div>
+      </div>
+
+      <div class="type-row">
+        <div>
+          <div class="type-meta-class">DISPLAY M</div>
+          <div class="type-meta">Cabinet · 300</div>
+        </div>
+        <div class="display-m">Aesthetic Curation</div>
+      </div>
+
+      <div class="type-row">
+        <div>
+          <div class="type-meta-class">BODY</div>
+          <div class="type-meta">Satoshi · 300</div>
+        </div>
+        <div class="body-text">For loop packs, samples, and creative submissions. Drop your files below and I'll review and respond within a few days.</div>
+      </div>
+
+      <div class="type-row">
+        <div>
+          <div class="type-meta-class">CAPTION</div>
+          <div class="type-meta">Satoshi · 400</div>
+        </div>
+        <div class="caption-text">Creative Direction</div>
+      </div>
+    </section>
+
+    <!-- COMPONENTS -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Components</h2>
+      </div>
+
+      <!-- Nav -->
+      <div class="component">
+        <div class="component-label">Global Navigation</div>
+        <div class="component-frame">
+          <div class="nav-example">
+            <div class="nav-wordmark">Riss Creative</div>
+            <div class="nav-links">
+              <span>Links</span>
+              <span>Submit</span>
+              <span>Creative</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Link rows -->
+      <div class="component">
+        <div class="component-label">Link Row · /links page</div>
+        <div class="component-frame">
+          <div class="link-row">
+            <span class="link-platform">Soundcloud</span>
+            <span class="link-handle">DJ sets & mixes</span>
+          </div>
+          <div class="link-row">
+            <span class="link-platform">Instagram</span>
+            <span class="link-handle">@riss</span>
+          </div>
+          <div class="link-row">
+            <span class="link-platform">YouTube</span>
+            <span class="link-handle" style="opacity: 0.5;">Coming soon</span>
+          </div>
+          <div class="link-row">
+            <span class="link-platform">TikTok</span>
+            <span class="link-handle">@riss</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="component">
+        <div class="component-label">Form Fields · /submit page</div>
+        <div class="component-frame">
+          <div class="form-field">
+            <input type="text" class="form-input" placeholder="Artist name" />
+          </div>
+          <div class="form-field">
+            <input type="email" class="form-input" placeholder="Email" />
+          </div>
+          <div class="form-field">
+            <input type="text" class="form-input" placeholder="Brief description" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Dropzone -->
+      <div class="component">
+        <div class="component-label">File Dropzone · /submit page</div>
+        <div class="component-frame">
+          <div class="dropzone">
+            <div class="dropzone-text">Drop files here or click to browse</div>
+            <div class="dropzone-meta">.wav · .mp3 · .zip · max 500MB</div>
+          </div>
+          <div style="margin-top: 32px; text-align: right;">
+            <button class="submit-btn">Submit →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CREATIVE LAYOUT VARIATIONS -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Creative Page Layout</h2>
+      </div>
+
+      <p class="body-text" style="color: var(--muted); max-width: 580px; margin-bottom: 64px;">Each capability section uses a different rhythm. Full-bleed, diptych, and split text+image — varied so the page reads as edited, not templated.</p>
+
+      <!-- Full bleed -->
+      <div class="capability">
+        <div class="image-placeholder ratio-video">
+          <div class="image-label">
+            Section 01
+            <span>Aesthetic Curation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split -->
+      <div class="capability split">
+        <div class="image-placeholder ratio-4-5">
+          <div class="image-label">
+            Section 02
+            <span>Creative Direction</span>
+          </div>
+        </div>
+        <div class="capability-text">
+          <h3>Creative Direction</h3>
+          <p>Visual identity shaping and artist brand execution. The throughline that makes scattered work feel like a single hand.</p>
+        </div>
+      </div>
+
+      <!-- Diptych -->
+      <div class="capability diptych">
+        <div class="image-placeholder ratio-3-4">
+          <div class="image-label">
+            Section 03a
+            <span>Styling</span>
+          </div>
+        </div>
+        <div class="image-placeholder ratio-3-4">
+          <div class="image-label">
+            Section 03b
+            <span>Styling</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Principles</h2>
+      </div>
+
+      <div class="principles">
+        <div class="principle do">
+          <div class="principle-tag">Do</div>
+          <ul>
+            <li>Let whitespace carry the page</li>
+            <li>Use weight, not color, for hierarchy</li>
+            <li>Hairline borders, never thick</li>
+            <li>Hover = opacity transition only</li>
+            <li>Trust the typography</li>
+            <li>Vary section rhythm on Creative page</li>
+          </ul>
+        </div>
+        <div class="principle dont">
+          <div class="principle-tag">Don't</div>
+          <ul>
+            <li>Add chromatic accents or gradients</li>
+            <li>Use drop shadows or filled buttons</li>
+            <li>Round corners beyond 2px</li>
+            <li>Use emoji or stock icons as decoration</li>
+            <li>Show platform branding anywhere</li>
+            <li>Treat every section the same</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISTINCTIVE MOVES -->
+    <section class="section">
+      <div class="section-head">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Distinctive Moves</h2>
+      </div>
+
+      <p class="body-text" style="color: var(--muted); max-width: 580px; margin-bottom: 64px;">
+        Three deliberate decisions that pull the site out of the AI-default zone. Skipping any one of them collapses the personality.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border);">
+
+        <div style="background: var(--background); padding: 40px 32px;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--muted); margin-bottom: 16px;">Move 01</div>
+          <h3 style="font-family: 'Cabinet Grotesk', sans-serif; font-weight: 200; font-size: 28px; letter-spacing: -0.02em; margin-bottom: 16px;">Off-center homepage</h3>
+          <p class="body-text" style="color: var(--muted); max-width: 520px;">
+            Wordmark anchored lower-left, metadata floats upper-right. Composition reads as magazine cover, not landing page. The asymmetry is the point — centered hero is the AI-default tell.
+          </p>
+        </div>
+
+        <div style="background: var(--background); padding: 40px 32px;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--muted); margin-bottom: 16px;">Move 02</div>
+          <h3 style="font-family: 'Cabinet Grotesk', sans-serif; font-weight: 200; font-size: 28px; letter-spacing: -0.02em; margin-bottom: 16px;">
+            One italic <span class="accent-italic">accent</span>
+          </h3>
+          <p class="body-text" style="color: var(--muted); max-width: 520px;">
+            Exactly one word in Fraunces italic, used only in the homepage descriptor: <span class="accent-italic" style="color: var(--foreground);">curation</span>. Its rarity is what makes it work. Do not repeat this move anywhere else on the site.
+          </p>
+        </div>
+
+        <div style="background: var(--background); padding: 40px 32px;">
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--muted); margin-bottom: 16px;">Move 03</div>
+          <h3 style="font-family: 'Cabinet Grotesk', sans-serif; font-weight: 200; font-size: 28px; letter-spacing: -0.02em; margin-bottom: 16px;">Film grain overlay</h3>
+          <p class="body-text" style="color: var(--muted); max-width: 520px;">
+            A fine SVG noise texture at 3.5% opacity across every surface of the site. You're looking at it now — visible on this page. Makes the dark backgrounds feel printed rather than rendered. The single biggest move against the surgical-flat AI aesthetic.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <span>© Riss Creative · 2026</span>
+      <span>Visual Reference · Internal</span>
+    </footer>
+
+  </div>
+</body>
+</html>
