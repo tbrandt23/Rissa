@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "Riss Creative",
@@ -28,6 +29,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-background text-foreground">
+        <SmoothScroll />
+        {/* depth: warm vignette, no chromatic color */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-[90]"
+          style={{
+            background:
+              "radial-gradient(120% 120% at 50% 0%, transparent 55%, rgba(0,0,0,0.55) 100%)",
+          }}
+        />
+        {/* film grain */}
         <div
           aria-hidden="true"
           className="pointer-events-none fixed inset-0 z-[100] opacity-[0.035] mix-blend-overlay"

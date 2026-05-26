@@ -32,7 +32,7 @@ export default function CreativePage() {
             For portfolio inquiries —{" "}
             <a
               href={`mailto:${creativeCopy.contactEmail}`}
-              className="text-foreground transition-opacity duration-300 hover:opacity-60"
+              className="text-foreground link-underline"
             >
               {creativeCopy.contactEmail}
             </a>
