@@ -22,15 +22,10 @@ export default function SmoothScroll() {
     };
     frame = requestAnimationFrame(raf);
 
-    // section-to-section snapping.
-    // 50% threshold + full-screen sections => clean "hop" between adjacent
-    // sections, but the tall Work section releases once you're past its first
-    // half-screen (nothing to snap to ahead), so you're never trapped.
+    // mandatory snapping so every full-screen section locks to fit.
     const snap = new Snap(lenis, {
-      type: "proximity",
-      distanceThreshold: "50%",
-      duration: 0.9,
-      debounce: 180,
+      type: "mandatory",
+      duration: 0.8,
       easing: (t) => 1 - Math.pow(1 - t, 3),
     });
     const removers: Array<() => void> = [];
@@ -38,10 +33,31 @@ export default function SmoothScroll() {
       removers.push(snap.addElement(el, { align: "start" }));
     });
 
-    // recompute snap positions once fonts/images settle and on full load
-    const recompute = () => snap.resize();
-    const settleTimer = setTimeout(recompute, 700);
-    window.addEventListener("load", recompute);
+    // The Work section is taller than the viewport — mandatory snapping would
+    // trap you at its top. So disable the snap once you're inside Work and
+    // re-enable it when you scroll back above it.
+    let workTop = Number.POSITIVE_INFINITY;
+    const computeWorkTop = () => {
+      const el = document.getElementById("work");
+      workTop = el ? el.getBoundingClientRect().top + window.scrollY : Number.POSITIVE_INFINITY;
+      snap.resize();
+    };
+    computeWorkTop();
+    const settleTimer = setTimeout(computeWorkTop, 700);
+    window.addEventListener("load", computeWorkTop);
+    window.addEventListener("resize", computeWorkTop);
+
+    let snapOff = false;
+    const onScroll = ({ scroll }: { scroll: number }) => {
+      if (scroll > workTop + 4 && !snapOff) {
+        snapOff = true;
+        snap.stop();
+      } else if (scroll < workTop - 4 && snapOff) {
+        snapOff = false;
+        snap.start();
+      }
+    };
+    lenis.on("scroll", onScroll);
 
     // smooth in-page anchor jumps
     const onClick = (e: MouseEvent) => {
@@ -61,8 +77,10 @@ export default function SmoothScroll() {
     return () => {
       cancelAnimationFrame(frame);
       clearTimeout(settleTimer);
-      window.removeEventListener("load", recompute);
+      window.removeEventListener("load", computeWorkTop);
+      window.removeEventListener("resize", computeWorkTop);
       document.removeEventListener("click", onClick);
+      lenis.off("scroll", onScroll);
       removers.forEach((r) => r());
       snap.destroy();
       lenis.destroy();
