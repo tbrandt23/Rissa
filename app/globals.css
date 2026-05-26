@@ -23,7 +23,7 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-body { overflow-x: hidden; }
+body { overflow-x: clip; }
 
 ::selection { background: var(--foreground); color: var(--background); }
 
