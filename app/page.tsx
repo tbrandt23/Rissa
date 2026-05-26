@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import CapabilitySection from "@/components/CapabilitySection";
+import SectionDeck from "@/components/SectionDeck";
 import FadeIn from "@/components/FadeIn";
 import LinkRow from "@/components/LinkRow";
 import Dropzone from "@/components/Dropzone";
@@ -27,8 +28,11 @@ export default function HomePage() {
   // enable section-snap deck only on the homepage
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.add("snap-deck");
-    return () => root.classList.remove("snap-deck");
+    const prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "smooth";
+    return () => {
+      root.style.scrollBehavior = prev;
+    };
   }, []);
 
   // animation-delay helper: only applied during the intro play
@@ -39,6 +43,7 @@ export default function HomePage() {
 
   return (
     <>
+      <SectionDeck />
       {/* HERO — magazine cover, off-center */}
       <section data-snap className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24">
         {/* depth glow behind wordmark — warm off-white, very low opacity */}
