@@ -33,7 +33,7 @@ export default function HomePage() {
   return (
     <>
       {/* HERO — magazine cover, off-center */}
-      <section className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24">
+      <section data-snap className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24">
         {/* depth glow behind wordmark — warm off-white, very low opacity */}
         <div
           aria-hidden="true"
@@ -127,7 +127,8 @@ export default function HomePage() {
       {/* LINKS — inline */}
       <section
         id="links"
-        className="px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 scroll-mt-16 border-t border-border"
+        data-snap
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-md">
           <FadeIn>
@@ -151,7 +152,8 @@ export default function HomePage() {
       {/* SUBMIT — inline */}
       <section
         id="submit"
-        className="px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 scroll-mt-16 border-t border-border"
+        data-snap
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-2xl">
           <FadeIn>
@@ -207,7 +209,8 @@ export default function HomePage() {
       {/* WORK — inline */}
       <section
         id="work"
-        className="px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 scroll-mt-16 border-t border-border"
+        data-snap
+        className="px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-6xl">
           <FadeIn>
