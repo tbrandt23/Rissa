@@ -143,7 +143,7 @@ export default function HomePage() {
         className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-md">
-          <FadeIn>
+          <FadeIn once={false}>
             <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
               {linksCopy.caption}
             </div>
@@ -151,13 +151,13 @@ export default function HomePage() {
               {linksCopy.title}
             </h2>
           </FadeIn>
-          <FadeIn>
-            <div>
-              {links.map((item) => (
-                <LinkRow key={item.platform} item={item} />
-              ))}
-            </div>
-          </FadeIn>
+          <div>
+            {links.map((item, i) => (
+              <FadeIn key={item.platform} once={false} delay={120 + i * 90}>
+                <LinkRow item={item} />
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -168,7 +168,7 @@ export default function HomePage() {
         className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-2xl">
-          <FadeIn>
+          <FadeIn once={false}>
             <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
               {submitCopy.caption}
             </div>
@@ -180,7 +180,7 @@ export default function HomePage() {
             </p>
           </FadeIn>
 
-          <FadeIn>
+          <FadeIn once={false} delay={150}>
             {submitted ? (
               <div className="border border-border px-6 py-16 text-center">
                 <div className="font-display font-light text-[20px] md:text-[24px] mb-3">
