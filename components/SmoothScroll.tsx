@@ -22,17 +22,26 @@ export default function SmoothScroll() {
     };
     frame = requestAnimationFrame(raf);
 
-    // section-to-section snapping (gentle: only engages near a boundary)
+    // section-to-section snapping.
+    // 50% threshold + full-screen sections => clean "hop" between adjacent
+    // sections, but the tall Work section releases once you're past its first
+    // half-screen (nothing to snap to ahead), so you're never trapped.
     const snap = new Snap(lenis, {
       type: "proximity",
-      distanceThreshold: "25%",
-      duration: 1.0,
+      distanceThreshold: "50%",
+      duration: 0.9,
+      debounce: 180,
       easing: (t) => 1 - Math.pow(1 - t, 3),
     });
     const removers: Array<() => void> = [];
     document.querySelectorAll<HTMLElement>("[data-snap]").forEach((el) => {
       removers.push(snap.addElement(el, { align: "start" }));
     });
+
+    // recompute snap positions once fonts/images settle and on full load
+    const recompute = () => snap.resize();
+    const settleTimer = setTimeout(recompute, 700);
+    window.addEventListener("load", recompute);
 
     // smooth in-page anchor jumps
     const onClick = (e: MouseEvent) => {
@@ -51,6 +60,8 @@ export default function SmoothScroll() {
 
     return () => {
       cancelAnimationFrame(frame);
+      clearTimeout(settleTimer);
+      window.removeEventListener("load", recompute);
       document.removeEventListener("click", onClick);
       removers.forEach((r) => r());
       snap.destroy();
