@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import CapabilitySection from "@/components/CapabilitySection";
 import SectionDeck from "@/components/SectionDeck";
@@ -12,41 +12,24 @@ import { capabilities } from "@/content/capabilities";
 import { links } from "@/content/links";
 import { homeCopy, creativeCopy, submitCopy, linksCopy } from "@/content/copy";
 
+const ctas = [
+  { href: "#links", num: "01", label: "Links" },
+  { href: "#submit", num: "02", label: "Send loops" },
+  { href: "#work", num: "03", label: "Work" },
+];
+
 export default function HomePage() {
   const [submitted, setSubmitted] = useState(false);
-  const [intro, setIntro] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const seen = sessionStorage.getItem("riss-intro-seen");
-    if (!seen) {
-      setIntro(true);
-      sessionStorage.setItem("riss-intro-seen", "1");
-    }
-  }, []);
-
-  // enable section-snap deck only on the homepage
-  useEffect(() => {
-    const root = document.documentElement;
-    const prev = root.style.scrollBehavior;
-    root.style.scrollBehavior = "smooth";
-    return () => {
-      root.style.scrollBehavior = prev;
-    };
-  }, []);
-
-  // animation-delay helper: only applied during the intro play
-  const reveal = (delay: number) =>
-    intro
-      ? { className: "rise-in", style: { animationDelay: `${delay}ms` } }
-      : { className: "", style: undefined };
 
   return (
     <>
       <SectionDeck />
+
       {/* HERO — magazine cover, off-center */}
-      <section data-snap className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24">
-        {/* depth glow behind wordmark — warm off-white, very low opacity */}
+      <section
+        data-snap
+        className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24"
+      >
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
@@ -56,22 +39,22 @@ export default function HomePage() {
           }}
         />
         <div
-          className={`absolute top-20 md:top-24 right-6 md:right-12 lg:right-20 text-right font-sans text-[10px] md:text-[11px] tracking-[0.15em] text-muted max-w-[60%] md:max-w-none z-10 ${reveal(450).className}`}
-          style={reveal(450).style}
+          className="rise absolute top-20 md:top-24 right-6 md:right-12 lg:right-20 text-right font-sans text-[10px] md:text-[11px] tracking-[0.15em] text-muted max-w-[60%] md:max-w-none z-10"
+          style={{ transitionDelay: "360ms" }}
         >
           {homeCopy.metaTopRight}
         </div>
 
         <div className="absolute bottom-[10vh] left-6 right-6 md:left-12 md:right-12 lg:left-20 lg:right-20 z-10">
           <h1
-            className={`font-display font-extralight text-[clamp(56px,12vw,140px)] leading-[0.9] tracking-[-0.04em] text-foreground mb-4 md:mb-5 ${reveal(0).className}`}
-            style={reveal(0).style}
+            className="rise font-display font-extralight text-[clamp(56px,12vw,140px)] leading-[0.9] tracking-[-0.04em] text-foreground mb-4 md:mb-5"
+            style={{ transitionDelay: "0ms" }}
           >
             {homeCopy.wordmark}
           </h1>
           <p
-            className={`font-sans font-light text-[clamp(15px,2vw,19px)] text-foreground-cool max-w-[520px] ${reveal(150).className}`}
-            style={reveal(150).style}
+            className="rise font-sans font-light text-[clamp(15px,2vw,19px)] text-foreground-cool max-w-[520px]"
+            style={{ transitionDelay: "120ms" }}
           >
             {homeCopy.descriptorPrefix}
             <span className="accent-italic" style={{ fontSize: "1.05em" }}>
@@ -79,96 +62,75 @@ export default function HomePage() {
             </span>
           </p>
           <div
-            className={`mt-10 md:mt-14 flex flex-col md:flex-row gap-5 md:gap-10 ${reveal(300).className}`}
-            style={reveal(300).style}
+            className="rise mt-10 md:mt-14 flex flex-col md:flex-row gap-5 md:gap-10"
+            style={{ transitionDelay: "240ms" }}
           >
-            <Link
-              href="#links"
-              className="group inline-flex items-baseline gap-3 text-foreground transition-opacity duration-300 hover:opacity-60"
-            >
-              <span className="text-[10px] uppercase tracking-[0.3em] text-muted group-hover:text-foreground transition-colors duration-300">
-                01
-              </span>
-              <span className="font-display font-light text-[20px] md:text-[24px] tracking-[-0.01em]">
-                Links
-              </span>
-              <span aria-hidden className="text-muted group-hover:text-foreground transition-colors duration-300">
-                ↓
-              </span>
-            </Link>
-            <Link
-              href="#submit"
-              className="group inline-flex items-baseline gap-3 text-foreground transition-opacity duration-300 hover:opacity-60"
-            >
-              <span className="text-[10px] uppercase tracking-[0.3em] text-muted group-hover:text-foreground transition-colors duration-300">
-                02
-              </span>
-              <span className="font-display font-light text-[20px] md:text-[24px] tracking-[-0.01em]">
-                Send loops
-              </span>
-              <span aria-hidden className="text-muted group-hover:text-foreground transition-colors duration-300">
-                ↓
-              </span>
-            </Link>
-            <Link
-              href="#work"
-              className="group inline-flex items-baseline gap-3 text-foreground transition-opacity duration-300 hover:opacity-60"
-            >
-              <span className="text-[10px] uppercase tracking-[0.3em] text-muted group-hover:text-foreground transition-colors duration-300">
-                03
-              </span>
-              <span className="font-display font-light text-[20px] md:text-[24px] tracking-[-0.01em]">
-                Work
-              </span>
-              <span aria-hidden className="text-muted group-hover:text-foreground transition-colors duration-300">
-                ↓
-              </span>
-            </Link>
+            {ctas.map((c) => (
+              <Link
+                key={c.href}
+                href={c.href}
+                className="group inline-flex items-baseline gap-3 text-foreground transition-opacity duration-300 hover:opacity-60"
+              >
+                <span className="text-[10px] uppercase tracking-[0.3em] text-muted group-hover:text-foreground transition-colors duration-300">
+                  {c.num}
+                </span>
+                <span className="font-display font-light text-[20px] md:text-[24px] tracking-[-0.01em]">
+                  {c.label}
+                </span>
+                <span aria-hidden className="text-muted group-hover:text-foreground transition-colors duration-300">
+                  ↓
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
 
         <Link
           href="#links"
-          scroll={true}
-          className="absolute bottom-6 right-6 md:right-12 lg:right-20 text-[10px] uppercase tracking-[0.3em] text-muted transition-opacity duration-300 hover:opacity-60"
+          className="rise absolute bottom-6 right-6 md:right-12 lg:right-20 text-[10px] uppercase tracking-[0.3em] text-muted transition-opacity duration-300 hover:opacity-60"
+          style={{ transitionDelay: "480ms" }}
         >
           ↓ scroll
         </Link>
       </section>
 
-      {/* LINKS — inline */}
+      {/* LINKS */}
       <section
         id="links"
         data-snap
         className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-md">
-          <FadeIn once={false}>
+          <div className="rise" style={{ transitionDelay: "0ms" }}>
             <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
               {linksCopy.caption}
             </div>
             <h2 className="font-display font-extralight text-[40px] md:text-[56px] tracking-[-0.03em] leading-none mb-12 md:mb-16">
               {linksCopy.title}
             </h2>
-          </FadeIn>
+          </div>
           <div>
             {links.map((item, i) => (
-              <FadeIn key={item.platform} once={false} delay={120 + i * 90}>
+              <div
+                key={item.platform}
+                className="rise"
+                style={{ transitionDelay: `${160 + i * 90}ms` }}
+              >
                 <LinkRow item={item} />
-              </FadeIn>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* SUBMIT — inline */}
+      {/* SUBMIT */}
       <section
         id="submit"
         data-snap
         className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-2xl">
-          <FadeIn once={false}>
+          <div className="rise" style={{ transitionDelay: "0ms" }}>
             <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
               {submitCopy.caption}
             </div>
@@ -178,9 +140,9 @@ export default function HomePage() {
             <p className="font-sans font-light text-[15px] md:text-[17px] leading-[1.55] text-muted max-w-[520px] mb-16 md:mb-20">
               {submitCopy.intro}
             </p>
-          </FadeIn>
+          </div>
 
-          <FadeIn once={false} delay={150}>
+          <div className="rise" style={{ transitionDelay: "180ms" }}>
             {submitted ? (
               <div className="border border-border px-6 py-16 text-center">
                 <div className="font-display font-light text-[20px] md:text-[24px] mb-3">
@@ -214,11 +176,11 @@ export default function HomePage() {
                 </div>
               </form>
             )}
-          </FadeIn>
+          </div>
         </div>
       </section>
 
-      {/* WORK — inline, free-scroll (not a snap target) */}
+      {/* WORK — free-scroll */}
       <section
         id="work"
         className="px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 border-t border-border"

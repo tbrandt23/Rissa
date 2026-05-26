@@ -2,16 +2,13 @@
 
 import { useEffect } from "react";
 
-// JS-driven full-page deck: one gesture = one section, no resting in gaps.
-// Deck sections carry [data-snap]; the tall #work section is free-scroll.
+// JS-driven full-page deck:
+//  - one gesture = one section (no resting in the gap between sections)
+//  - controlled "boom" jump, then the landed section plays its entrance
+//  - the tall #work section is free-scroll
 export default function SectionDeck() {
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-
-    // always open at the top — ignore the browser's remembered scroll position
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    window.scrollTo({ top: 0, behavior: "auto" });
 
     const deck = Array.from(document.querySelectorAll<HTMLElement>("[data-snap]"));
     const work = document.getElementById("work");
@@ -24,42 +21,86 @@ export default function SectionDeck() {
     const isLast = () => index >= deck.length - 1;
 
     let index = 0;
-    let locked = false;
-    let quietTimer = 0;
 
-    // release the lock only after the gesture AND its momentum have stopped
-    const scheduleUnlock = () => {
-      window.clearTimeout(quietTimer);
-      quietTimer = window.setTimeout(() => {
-        locked = false;
-      }, 160);
+    const updateActive = () => {
+      const deckActive = !inWork();
+      deck.forEach((s, i) => s.classList.toggle("is-active", deckActive && i === index));
     };
 
-    const scrollToY = (y: number) => {
-      locked = true;
-      window.scrollTo({ top: y, behavior: "smooth" });
-      scheduleUnlock();
+    // start at the top, hero active
+    window.scrollTo({ top: 0, behavior: "auto" });
+    updateActive();
+    const resetTop = () => {
+      window.scrollTo({ top: 0, behavior: "auto" });
+      index = 0;
+      updateActive();
+    };
+    window.addEventListener("load", resetTop);
+    window.addEventListener("pageshow", resetTop);
+
+    if (reduce) {
+      // no scroll hijacking; still ensure everything is visible
+      deck.forEach((s) => s.classList.add("is-active"));
+      return () => {
+        window.removeEventListener("load", resetTop);
+        window.removeEventListener("pageshow", resetTop);
+      };
+    }
+
+    // ---- controlled scroll animation ----
+    let rafScroll = 0;
+    let animating = false;
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    const animateTo = (targetY: number, onDone: () => void) => {
+      cancelAnimationFrame(rafScroll);
+      const startY = window.scrollY;
+      const dist = targetY - startY;
+      const duration = 620;
+      const start = performance.now();
+      animating = true;
+      const step = (now: number) => {
+        const t = Math.min(1, (now - start) / duration);
+        window.scrollTo(0, startY + dist * easeOutCubic(t));
+        if (t < 1) {
+          rafScroll = requestAnimationFrame(step);
+        } else {
+          animating = false;
+          onDone();
+        }
+      };
+      rafScroll = requestAnimationFrame(step);
+    };
+
+    // ---- gesture lock: release only after motion + momentum settle ----
+    let locked = false;
+    let lastWheel = 0;
+    let watching = false;
+    const unlockWatch = () => {
+      if (!animating && performance.now() - lastWheel > 160) {
+        locked = false;
+        watching = false;
+        return;
+      }
+      requestAnimationFrame(unlockWatch);
+    };
+    const startWatch = () => {
+      if (!watching) {
+        watching = true;
+        requestAnimationFrame(unlockWatch);
+      }
     };
 
     const goTo = (i: number) => {
       index = Math.max(0, Math.min(i, deck.length - 1));
-      scrollToY(topOf(deck[index]));
+      locked = true;
+      animateTo(topOf(deck[index]), updateActive);
+      startWatch();
     };
-
-    const enterWork = () => scrollToY(workTop());
-
-    // keep `index` synced while free-scrolling Work or after resize
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting && e.intersectionRatio >= 0.55) {
-            const i = deck.indexOf(e.target as HTMLElement);
-            if (i !== -1) index = i;
-          }
-        }),
-      { threshold: [0.55] },
-    );
-    deck.forEach((s) => io.observe(s));
+    const enterWork = () => {
+      locked = true;
+      animateTo(workTop(), updateActive);
+      startWatch();
+    };
 
     const advance = (down: boolean) => {
       if (down) {
@@ -75,20 +116,17 @@ export default function SectionDeck() {
       const down = e.deltaY > 0;
 
       if (inWork()) {
-        // free-scroll through the work images; only intercept an upward
-        // gesture at the very top to hop back to the last deck section
         if (!down && atWorkTop()) {
           e.preventDefault();
+          lastWheel = performance.now();
           if (!locked) goTo(deck.length - 1);
         }
-        return;
+        return; // free-scroll through the work images
       }
 
       e.preventDefault();
-      if (locked) {
-        scheduleUnlock();
-        return;
-      }
+      lastWheel = performance.now();
+      if (locked) return;
       advance(down);
     };
 
@@ -99,6 +137,24 @@ export default function SectionDeck() {
       if (!down && !up) return;
       e.preventDefault();
       if (!locked) advance(down);
+    };
+
+    // hero CTAs / scroll prompt drive the same deck animation
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement)?.closest?.(
+        'a[href^="#"]',
+      ) as HTMLAnchorElement | null;
+      if (!a) return;
+      const id = a.getAttribute("href");
+      if (!id || id === "#") return;
+      e.preventDefault();
+      if (id === "#work") {
+        enterWork();
+        return;
+      }
+      const target = document.querySelector(id) as HTMLElement | null;
+      const i = target ? deck.indexOf(target) : -1;
+      if (i !== -1 && !locked) goTo(i);
     };
 
     let touchY = 0;
@@ -115,24 +171,23 @@ export default function SectionDeck() {
       if (!locked) advance(dy > 0);
     };
 
-    const onScrollEnd = () => scheduleUnlock();
-
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
-    window.addEventListener("scrollend", onScrollEnd);
+    document.addEventListener("click", onClick);
 
     return () => {
-      io.disconnect();
-      window.clearTimeout(quietTimer);
+      cancelAnimationFrame(rafScroll);
+      window.removeEventListener("load", resetTop);
+      window.removeEventListener("pageshow", resetTop);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
-      window.removeEventListener("scrollend", onScrollEnd);
+      document.removeEventListener("click", onClick);
     };
   }, []);
 
