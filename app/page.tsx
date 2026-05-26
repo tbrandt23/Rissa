@@ -24,6 +24,13 @@ export default function HomePage() {
     }
   }, []);
 
+  // enable section-snap deck only on the homepage
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add("snap-deck");
+    return () => root.classList.remove("snap-deck");
+  }, []);
+
   // animation-delay helper: only applied during the intro play
   const reveal = (delay: number) =>
     intro
@@ -206,10 +213,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WORK — inline */}
+      {/* WORK — inline, free-scroll (not a snap target) */}
       <section
         id="work"
-        data-snap
         className="px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-6xl">
