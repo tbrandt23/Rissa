@@ -44,9 +44,15 @@ export default function WorkGallery({ items }: { items: Capability[] }) {
 
   return (
     <div className="relative w-full">
+      <div className="mb-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.25em] text-muted">
+        <span>
+          {String(current + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
+        </span>
+        <span className="hidden md:inline">↔ Swipe or use arrows</span>
+      </div>
       <div
         ref={scrollerRef}
-        className="gallery-scroller flex gap-6 md:gap-10 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-6 md:-mx-12 lg:-mx-20 px-6 md:px-12 lg:px-20"
+        className="gallery-scroller flex gap-5 md:gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-6 md:-mx-12 lg:-mx-20 px-6 md:px-12 lg:px-20"
       >
         {items.map((cap, i) => (
           <div
@@ -54,7 +60,7 @@ export default function WorkGallery({ items }: { items: Capability[] }) {
             ref={(el) => {
               cardsRef.current[i] = el;
             }}
-            className={`shrink-0 snap-start w-[85vw] md:w-[64vw] lg:w-[58vw] ${
+            className={`shrink-0 snap-start w-[78vw] md:w-[52vw] lg:w-[46vw] ${
               i === current ? "is-current" : ""
             }`}
           >
@@ -95,15 +101,15 @@ export default function WorkGallery({ items }: { items: Capability[] }) {
       </div>
 
       {/* indicators + prev/next */}
-      <div className="mt-8 md:mt-10 flex items-center justify-between gap-6">
+      <div className="mt-6 md:mt-8 flex items-center justify-between gap-6">
         <button
           type="button"
           onClick={() => scrollToCard(Math.max(0, current - 1))}
           disabled={current === 0}
           aria-label="Previous"
-          className="font-sans text-[12px] uppercase tracking-[0.25em] text-muted transition-opacity duration-300 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+          className="h-10 w-10 md:h-11 md:w-11 inline-flex items-center justify-center border border-border text-foreground transition-colors duration-300 hover:border-foreground disabled:opacity-25 disabled:cursor-not-allowed"
         >
-          ← Prev
+          <span aria-hidden className="text-[18px] leading-none">←</span>
         </button>
 
         <div className="flex items-center gap-2">
@@ -113,8 +119,8 @@ export default function WorkGallery({ items }: { items: Capability[] }) {
               type="button"
               aria-label={`Go to ${it.title}`}
               onClick={() => scrollToCard(i)}
-              className={`h-[6px] rounded-none transition-all duration-300 ${
-                i === current ? "w-8 bg-foreground" : "w-2 bg-muted/40 hover:bg-muted"
+              className={`h-[6px] transition-all duration-300 ${
+                i === current ? "w-10 bg-foreground" : "w-2 bg-muted/40 hover:bg-muted"
               }`}
             />
           ))}
@@ -125,9 +131,9 @@ export default function WorkGallery({ items }: { items: Capability[] }) {
           onClick={() => scrollToCard(Math.min(items.length - 1, current + 1))}
           disabled={current === items.length - 1}
           aria-label="Next"
-          className="font-sans text-[12px] uppercase tracking-[0.25em] text-muted transition-opacity duration-300 hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+          className="h-10 w-10 md:h-11 md:w-11 inline-flex items-center justify-center border border-border text-foreground transition-colors duration-300 hover:border-foreground disabled:opacity-25 disabled:cursor-not-allowed"
         >
-          Next →
+          <span aria-hidden className="text-[18px] leading-none">→</span>
         </button>
       </div>
     </div>

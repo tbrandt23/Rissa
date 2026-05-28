@@ -67,7 +67,7 @@ export default function SectionDeck() {
     let lastWheel = 0;
     let watching = false;
     const unlockWatch = () => {
-      if (!animating && performance.now() - lastWheel > 55) {
+      if (!animating && performance.now() - lastWheel > 180) {
         locked = false;
         watching = false;
         return;

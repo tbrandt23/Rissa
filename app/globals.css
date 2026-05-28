@@ -69,7 +69,8 @@ body { overflow-x: clip; }
   transform: translateY(0) scale(1);
 }
 
-/* carousel card reveal: pops when the card becomes the current slide */
+/* carousel card reveal: pops only when the Work section is active AND
+   this is the current card. Avoids firing while the user is still elsewhere. */
 .pop {
   opacity: 0;
   transform: translateY(20px);
@@ -77,7 +78,7 @@ body { overflow-x: clip; }
     opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.is-current .pop {
+.is-active .is-current .pop {
   opacity: 1;
   transform: translateY(0);
 }
