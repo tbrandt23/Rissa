@@ -20,21 +20,20 @@ export default function SectionDeck() {
       deck.forEach((s, i) => s.classList.toggle("is-active", i === index));
     };
 
+    // open at the top, but only on real navigations (initial mount + bfcache restore)
     window.scrollTo({ top: 0, behavior: "auto" });
     updateActive();
-    const resetTop = () => {
+    const onPageShow = () => {
       window.scrollTo({ top: 0, behavior: "auto" });
       index = 0;
       updateActive();
     };
-    window.addEventListener("load", resetTop);
-    window.addEventListener("pageshow", resetTop);
+    window.addEventListener("pageshow", onPageShow);
 
     if (reduce) {
       deck.forEach((s) => s.classList.add("is-active"));
       return () => {
-        window.removeEventListener("load", resetTop);
-        window.removeEventListener("pageshow", resetTop);
+        window.removeEventListener("pageshow", onPageShow);
       };
     }
 
@@ -46,7 +45,7 @@ export default function SectionDeck() {
       cancelAnimationFrame(rafScroll);
       const startY = window.scrollY;
       const dist = targetY - startY;
-      const duration = 450;
+      const duration = 380;
       const start = performance.now();
       animating = true;
       const step = (now: number) => {
@@ -68,7 +67,7 @@ export default function SectionDeck() {
     let lastWheel = 0;
     let watching = false;
     const unlockWatch = () => {
-      if (!animating && performance.now() - lastWheel > 90) {
+      if (!animating && performance.now() - lastWheel > 55) {
         locked = false;
         watching = false;
         return;
@@ -131,15 +130,23 @@ export default function SectionDeck() {
       advance(down);
     };
 
+    let touchX = 0;
     let touchY = 0;
     const onTouchStart = (e: TouchEvent) => {
+      touchX = e.touches[0].clientX;
       touchY = e.touches[0].clientY;
     };
     const onTouchMove = (e: TouchEvent) => {
+      const dx = touchX - e.touches[0].clientX;
+      const dy = touchY - e.touches[0].clientY;
+      // let native handle clearly horizontal swipes (carousel)
+      if (Math.abs(dx) > Math.abs(dy)) return;
       if (e.cancelable) e.preventDefault();
     };
     const onTouchEnd = (e: TouchEvent) => {
+      const dx = touchX - e.changedTouches[0].clientX;
       const dy = touchY - e.changedTouches[0].clientY;
+      if (Math.abs(dx) > Math.abs(dy)) return; // horizontal — carousel handled it
       if (Math.abs(dy) < 45) return;
       const down = dy > 0;
       if (locked && (animating || (down ? 1 : -1) === lastDir)) return;
@@ -172,8 +179,7 @@ export default function SectionDeck() {
 
     return () => {
       cancelAnimationFrame(rafScroll);
-      window.removeEventListener("load", resetTop);
-      window.removeEventListener("pageshow", resetTop);
+      window.removeEventListener("pageshow", onPageShow);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("touchstart", onTouchStart);

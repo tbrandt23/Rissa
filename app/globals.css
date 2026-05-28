@@ -59,18 +59,35 @@ body { overflow-x: clip; }
 /* deck reveal: elements start hidden, pop in when their section is active */
 .rise {
   opacity: 0;
-  transform: translateY(28px) scale(0.985);
+  transform: translateY(24px) scale(0.985);
   transition:
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .is-active .rise {
   opacity: 1;
   transform: translateY(0) scale(1);
 }
 
+/* carousel card reveal: pops when the card becomes the current slide */
+.pop {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.is-current .pop {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* hide the horizontal gallery scrollbar */
+.gallery-scroller { scrollbar-width: none; }
+.gallery-scroller::-webkit-scrollbar { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal-mask { clip-path: inset(0 0 0% 0); transition: none; }
-  .rise { opacity: 1; transform: none; transition: none; }
+  .rise, .pop { opacity: 1; transform: none; transition: none; }
   .link-underline { transition: none; }
 }

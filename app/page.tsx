@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import CapabilitySection from "@/components/CapabilitySection";
+import WorkGallery from "@/components/WorkGallery";
 import SectionDeck from "@/components/SectionDeck";
 import LinkRow from "@/components/LinkRow";
 import Dropzone from "@/components/Dropzone";
@@ -122,29 +122,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SUBMIT — tightened to fit one viewport */}
+      {/* SUBMIT — fits one viewport */}
       <section
         id="submit"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-20 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-16 border-t border-border"
       >
         <div className="mx-auto w-full max-w-2xl">
           <div className="rise" style={{ transitionDelay: "0ms" }}>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-5">
+            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-4">
               {submitCopy.caption}
             </div>
-            <h2 className="font-display font-extralight text-[36px] md:text-[52px] tracking-[-0.03em] leading-[1] mb-5">
+            <h2 className="font-display font-extralight text-[32px] md:text-[44px] tracking-[-0.03em] leading-[1] mb-4">
               {submitCopy.title}
             </h2>
-            <p className="font-sans font-light text-[14px] md:text-[16px] leading-[1.55] text-muted max-w-[520px] mb-10">
+            <p className="font-sans font-light text-[14px] md:text-[15px] leading-[1.5] text-muted max-w-[520px] mb-7">
               {submitCopy.intro}
             </p>
           </div>
 
-          <div className="rise" style={{ transitionDelay: "180ms" }}>
+          <div className="rise" style={{ transitionDelay: "160ms" }}>
             {submitted ? (
-              <div className="border border-border px-6 py-12 text-center">
-                <div className="font-display font-light text-[20px] md:text-[24px] mb-3">
+              <div className="border border-border px-6 py-10 text-center">
+                <div className="font-display font-light text-[20px] md:text-[22px] mb-2">
                   Submission received.
                 </div>
                 <div className="text-[11px] uppercase tracking-[0.2em] text-muted">
@@ -157,15 +157,13 @@ export default function HomePage() {
                   e.preventDefault();
                   setSubmitted(true);
                 }}
-                className="space-y-5"
+                className="space-y-4"
               >
-                <label className="block cursor-pointer">
-                  <Dropzone />
-                </label>
+                <Dropzone />
                 <FormInput type="text" placeholder="Artist name" required />
                 <FormInput type="email" placeholder="Email" required />
-                <FormTextarea placeholder="Brief description" rows={3} />
-                <div className="flex justify-end pt-2">
+                <FormTextarea placeholder="Brief description" rows={2} />
+                <div className="flex justify-end pt-1">
                   <button
                     type="submit"
                     className="font-sans text-[13px] font-normal uppercase tracking-[0.2em] text-foreground inline-flex items-center gap-2 transition-opacity duration-300 hover:opacity-60"
@@ -179,42 +177,40 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WORK INTRO */}
+      {/* WORK — single section with horizontal carousel of all capabilities */}
       <section
         id="work"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-16 border-t border-border"
       >
         <div className="mx-auto w-full max-w-6xl">
-          <div className="rise" style={{ transitionDelay: "0ms" }}>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
-              {creativeCopy.caption}
+          <div className="flex items-baseline justify-between mb-10 md:mb-12">
+            <div>
+              <div
+                className="rise text-[11px] uppercase tracking-[0.25em] text-muted mb-3"
+                style={{ transitionDelay: "0ms" }}
+              >
+                {creativeCopy.caption}
+              </div>
+              <h2
+                className="rise font-display font-extralight text-[44px] md:text-[64px] tracking-[-0.03em] leading-[1]"
+                style={{ transitionDelay: "120ms" }}
+              >
+                {creativeCopy.title}
+              </h2>
             </div>
-            <h2 className="font-display font-extralight text-[56px] md:text-[96px] tracking-[-0.03em] leading-[1] mb-8">
-              {creativeCopy.title}
-            </h2>
+            <div
+              className="rise hidden md:block text-[10px] uppercase tracking-[0.25em] text-muted text-right max-w-[280px]"
+              style={{ transitionDelay: "240ms" }}
+            >
+              {creativeCopy.intro}
+            </div>
           </div>
-          <p
-            className="rise font-sans font-light text-[15px] md:text-[17px] leading-[1.55] text-muted max-w-[560px]"
-            style={{ transitionDelay: "180ms" }}
-          >
-            {creativeCopy.intro}
-          </p>
+          <div className="rise" style={{ transitionDelay: "320ms" }}>
+            <WorkGallery items={capabilities} />
+          </div>
         </div>
       </section>
-
-      {/* CAPABILITIES — each is its own snap section */}
-      {capabilities.map((cap, i) => (
-        <section
-          key={cap.number}
-          data-snap
-          className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-20 border-t border-border"
-        >
-          <div className="mx-auto w-full max-w-6xl">
-            <CapabilitySection cap={cap} priority={i === 0} />
-          </div>
-        </section>
-      ))}
 
       {/* CONTACT */}
       <section
