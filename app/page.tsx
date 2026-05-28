@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import CapabilitySection from "@/components/CapabilitySection";
 import SectionDeck from "@/components/SectionDeck";
-import FadeIn from "@/components/FadeIn";
 import LinkRow from "@/components/LinkRow";
 import Dropzone from "@/components/Dropzone";
 import { FormInput, FormTextarea } from "@/components/FormField";
@@ -25,10 +24,10 @@ export default function HomePage() {
     <>
       <SectionDeck />
 
-      {/* HERO — magazine cover, off-center */}
+      {/* HERO */}
       <section
         data-snap
-        className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24"
+        className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 overflow-hidden"
       >
         <div
           aria-hidden="true"
@@ -54,7 +53,7 @@ export default function HomePage() {
           </h1>
           <p
             className="rise font-sans font-light text-[clamp(15px,2vw,19px)] text-foreground-cool max-w-[520px]"
-            style={{ transitionDelay: "120ms" }}
+            style={{ transitionDelay: "140ms" }}
           >
             {homeCopy.descriptorPrefix}
             <span className="accent-italic" style={{ fontSize: "1.05em" }}>
@@ -62,8 +61,8 @@ export default function HomePage() {
             </span>
           </p>
           <div
-            className="rise mt-10 md:mt-14 flex flex-col md:flex-row gap-5 md:gap-10"
-            style={{ transitionDelay: "240ms" }}
+            className="rise mt-8 md:mt-12 flex flex-col md:flex-row gap-5 md:gap-10"
+            style={{ transitionDelay: "280ms" }}
           >
             {ctas.map((c) => (
               <Link
@@ -88,7 +87,7 @@ export default function HomePage() {
         <Link
           href="#links"
           className="rise absolute bottom-6 right-6 md:right-12 lg:right-20 text-[10px] uppercase tracking-[0.3em] text-muted transition-opacity duration-300 hover:opacity-60"
-          style={{ transitionDelay: "480ms" }}
+          style={{ transitionDelay: "520ms" }}
         >
           ↓ scroll
         </Link>
@@ -123,28 +122,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SUBMIT */}
+      {/* SUBMIT — tightened to fit one viewport */}
       <section
         id="submit"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-20 border-t border-border"
       >
         <div className="mx-auto w-full max-w-2xl">
           <div className="rise" style={{ transitionDelay: "0ms" }}>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
+            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-5">
               {submitCopy.caption}
             </div>
-            <h2 className="font-display font-extralight text-[40px] md:text-[64px] tracking-[-0.03em] leading-[1] mb-8">
+            <h2 className="font-display font-extralight text-[36px] md:text-[52px] tracking-[-0.03em] leading-[1] mb-5">
               {submitCopy.title}
             </h2>
-            <p className="font-sans font-light text-[15px] md:text-[17px] leading-[1.55] text-muted max-w-[520px] mb-16 md:mb-20">
+            <p className="font-sans font-light text-[14px] md:text-[16px] leading-[1.55] text-muted max-w-[520px] mb-10">
               {submitCopy.intro}
             </p>
           </div>
 
           <div className="rise" style={{ transitionDelay: "180ms" }}>
             {submitted ? (
-              <div className="border border-border px-6 py-16 text-center">
+              <div className="border border-border px-6 py-12 text-center">
                 <div className="font-display font-light text-[20px] md:text-[24px] mb-3">
                   Submission received.
                 </div>
@@ -158,15 +157,15 @@ export default function HomePage() {
                   e.preventDefault();
                   setSubmitted(true);
                 }}
-                className="space-y-8"
+                className="space-y-5"
               >
-                <Dropzone />
-                <div className="pt-4">
-                  <FormInput type="text" placeholder="Artist name" required />
-                </div>
+                <label className="block cursor-pointer">
+                  <Dropzone />
+                </label>
+                <FormInput type="text" placeholder="Artist name" required />
                 <FormInput type="email" placeholder="Email" required />
-                <FormTextarea placeholder="Brief description" />
-                <div className="pt-4 flex justify-end">
+                <FormTextarea placeholder="Brief description" rows={3} />
+                <div className="flex justify-end pt-2">
                   <button
                     type="submit"
                     className="font-sans text-[13px] font-normal uppercase tracking-[0.2em] text-foreground inline-flex items-center gap-2 transition-opacity duration-300 hover:opacity-60"
@@ -180,45 +179,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WORK — free-scroll */}
+      {/* WORK INTRO */}
       <section
         id="work"
-        className="px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 border-t border-border"
+        data-snap
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
       >
         <div className="mx-auto w-full max-w-6xl">
-          <FadeIn>
+          <div className="rise" style={{ transitionDelay: "0ms" }}>
             <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
               {creativeCopy.caption}
             </div>
-            <h2 className="font-display font-extralight text-[44px] md:text-[72px] tracking-[-0.03em] leading-[1] mb-8">
+            <h2 className="font-display font-extralight text-[56px] md:text-[96px] tracking-[-0.03em] leading-[1] mb-8">
               {creativeCopy.title}
             </h2>
-            <p className="font-sans font-light text-[15px] md:text-[17px] leading-[1.55] text-muted max-w-[560px] mb-20 md:mb-28">
-              {creativeCopy.intro}
-            </p>
-          </FadeIn>
-
-          <div>
-            {capabilities.map((cap) => (
-              <FadeIn key={cap.number}>
-                <CapabilitySection cap={cap} />
-              </FadeIn>
-            ))}
           </div>
+          <p
+            className="rise font-sans font-light text-[15px] md:text-[17px] leading-[1.55] text-muted max-w-[560px]"
+            style={{ transitionDelay: "180ms" }}
+          >
+            {creativeCopy.intro}
+          </p>
+        </div>
+      </section>
 
-          <FadeIn>
-            <div className="mt-24 md:mt-32 py-16 text-center">
-              <p className="font-sans font-light text-[14px] md:text-[15px] text-muted">
-                For portfolio inquiries —{" "}
-                <a
-                  href={`mailto:${creativeCopy.contactEmail}`}
-                  className="text-foreground link-underline"
-                >
-                  {creativeCopy.contactEmail}
-                </a>
-              </p>
+      {/* CAPABILITIES — each is its own snap section */}
+      {capabilities.map((cap, i) => (
+        <section
+          key={cap.number}
+          data-snap
+          className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-20 border-t border-border"
+        >
+          <div className="mx-auto w-full max-w-6xl">
+            <CapabilitySection cap={cap} priority={i === 0} />
+          </div>
+        </section>
+      ))}
+
+      {/* CONTACT */}
+      <section
+        data-snap
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
+      >
+        <div className="mx-auto w-full max-w-2xl text-center">
+          <div className="rise" style={{ transitionDelay: "0ms" }}>
+            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
+              Contact
             </div>
-          </FadeIn>
+            <p className="font-display font-extralight text-[24px] md:text-[34px] tracking-[-0.02em] leading-[1.2] text-foreground mb-6">
+              For portfolio inquiries
+            </p>
+          </div>
+          <a
+            href={`mailto:${creativeCopy.contactEmail}`}
+            className="rise inline-block font-sans font-light text-[18px] md:text-[22px] text-foreground link-underline"
+            style={{ transitionDelay: "180ms" }}
+          >
+            {creativeCopy.contactEmail}
+          </a>
         </div>
       </section>
     </>
