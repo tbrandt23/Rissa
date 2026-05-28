@@ -50,17 +50,17 @@ export default function SectionDeck() {
     // ---- controlled scroll animation ----
     let rafScroll = 0;
     let animating = false;
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    const easeOutQuint = (t: number) => 1 - Math.pow(1 - t, 5);
     const animateTo = (targetY: number, onDone: () => void) => {
       cancelAnimationFrame(rafScroll);
       const startY = window.scrollY;
       const dist = targetY - startY;
-      const duration = 620;
+      const duration = 450;
       const start = performance.now();
       animating = true;
       const step = (now: number) => {
         const t = Math.min(1, (now - start) / duration);
-        window.scrollTo(0, startY + dist * easeOutCubic(t));
+        window.scrollTo(0, startY + dist * easeOutQuint(t));
         if (t < 1) {
           rafScroll = requestAnimationFrame(step);
         } else {
@@ -76,7 +76,7 @@ export default function SectionDeck() {
     let lastWheel = 0;
     let watching = false;
     const unlockWatch = () => {
-      if (!animating && performance.now() - lastWheel > 160) {
+      if (!animating && performance.now() - lastWheel > 110) {
         locked = false;
         watching = false;
         return;

@@ -59,14 +59,14 @@ body { overflow-x: clip; }
 /* deck reveal: elements start hidden, pop in when their section is active */
 .rise {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(28px) scale(0.985);
   transition:
-    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .is-active .rise {
   opacity: 1;
-  transform: none;
+  transform: translateY(0) scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {

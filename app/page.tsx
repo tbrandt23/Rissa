@@ -114,7 +114,7 @@ export default function HomePage() {
               <div
                 key={item.platform}
                 className="rise"
-                style={{ transitionDelay: `${160 + i * 90}ms` }}
+                style={{ transitionDelay: `${220 + i * 130}ms` }}
               >
                 <LinkRow item={item} />
               </div>
