@@ -177,36 +177,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WORK — single section with horizontal carousel of all capabilities */}
+      {/* WORK — horizontal Instagram-style carousel */}
       <section
         id="work"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-16 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-14 border-t border-border"
       >
         <div className="mx-auto w-full max-w-6xl">
-          <div className="flex items-baseline justify-between mb-10 md:mb-12">
+          <div className="flex items-end justify-between gap-8 mb-6 md:mb-8">
             <div>
               <div
-                className="rise text-[11px] uppercase tracking-[0.25em] text-muted mb-3"
+                className="rise text-[11px] uppercase tracking-[0.25em] text-muted mb-2"
                 style={{ transitionDelay: "0ms" }}
               >
                 {creativeCopy.caption}
               </div>
               <h2
-                className="rise font-display font-extralight text-[44px] md:text-[64px] tracking-[-0.03em] leading-[1]"
+                className="rise font-display font-extralight text-[36px] md:text-[48px] tracking-[-0.03em] leading-[1]"
                 style={{ transitionDelay: "120ms" }}
               >
                 {creativeCopy.title}
               </h2>
             </div>
             <div
-              className="rise hidden md:block text-[10px] uppercase tracking-[0.25em] text-muted text-right max-w-[280px]"
-              style={{ transitionDelay: "240ms" }}
+              className="rise hidden md:block text-[10px] uppercase tracking-[0.25em] text-muted text-right max-w-[260px] leading-[1.6]"
+              style={{ transitionDelay: "220ms" }}
             >
               {creativeCopy.intro}
             </div>
           </div>
-          <div className="rise" style={{ transitionDelay: "320ms" }}>
+          <div className="rise" style={{ transitionDelay: "280ms" }}>
             <WorkGallery items={capabilities} />
           </div>
         </div>

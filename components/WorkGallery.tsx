@@ -60,37 +60,35 @@ export default function WorkGallery({ items }: { items: Capability[] }) {
             ref={(el) => {
               cardsRef.current[i] = el;
             }}
-            className={`shrink-0 snap-start w-[78vw] md:w-[52vw] lg:w-[46vw] ${
+            className={`shrink-0 snap-start w-[78vw] md:w-[44vw] lg:w-[34vw] ${
               i === current ? "is-current" : ""
             }`}
           >
-            <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] gap-6 md:gap-10 items-center">
+            <div className="flex flex-col">
               <div className="pop" style={{ transitionDelay: "0ms" }}>
                 <ImageFrame
                   src={cap.image}
                   alt={cap.title}
-                  ratio={cap.ratio}
-                  number={cap.number}
-                  label={cap.title}
+                  ratio="video"
                   priority={i === 0}
                 />
               </div>
-              <div>
+              <div className="mt-4 md:mt-5">
                 <div
-                  className="pop text-[10px] uppercase tracking-[0.3em] text-muted mb-4"
-                  style={{ transitionDelay: "180ms" }}
+                  className="pop text-[10px] uppercase tracking-[0.3em] text-muted mb-2"
+                  style={{ transitionDelay: "160ms" }}
                 >
                   Section {cap.number}
                 </div>
                 <h3
-                  className="pop font-display font-extralight text-[28px] md:text-[36px] tracking-[-0.02em] mb-4 text-foreground"
-                  style={{ transitionDelay: "260ms" }}
+                  className="pop font-display font-extralight text-[22px] md:text-[26px] tracking-[-0.02em] mb-2 text-foreground"
+                  style={{ transitionDelay: "240ms" }}
                 >
                   {cap.title}
                 </h3>
                 <p
-                  className="pop font-sans font-light text-[15px] leading-[1.6] text-muted max-w-sm"
-                  style={{ transitionDelay: "340ms" }}
+                  className="pop font-sans font-light text-[13px] md:text-[14px] leading-[1.55] text-muted"
+                  style={{ transitionDelay: "320ms" }}
                 >
                   {cap.description}
                 </p>

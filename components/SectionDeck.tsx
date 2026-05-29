@@ -61,33 +61,29 @@ export default function SectionDeck() {
       rafScroll = requestAnimationFrame(step);
     };
 
-    // ---- gesture lock with direction-reversal unlock ----
+    // ---- gesture lock: simple fixed cooldown after each advance ----
+    // Predictable: ignore wheel during animation + a short cooldown, then
+    // the next wheel event advances. No momentum tracking (which was
+    // trackpad-dependent and either too sticky or too loose).
     let locked = false;
     let lastDir = 0;
-    let lastWheel = 0;
-    let watching = false;
-    const unlockWatch = () => {
-      if (!animating && performance.now() - lastWheel > 180) {
+    let unlockTimer = 0;
+    const COOLDOWN = 180; // post-animation grace to absorb gesture tail
+
+    const lockFor = (totalMs: number) => {
+      locked = true;
+      window.clearTimeout(unlockTimer);
+      unlockTimer = window.setTimeout(() => {
         locked = false;
-        watching = false;
-        return;
-      }
-      requestAnimationFrame(unlockWatch);
-    };
-    const startWatch = () => {
-      if (!watching) {
-        watching = true;
-        requestAnimationFrame(unlockWatch);
-      }
+      }, totalMs);
     };
 
     const goTo = (i: number) => {
       const clamped = Math.max(0, Math.min(i, deck.length - 1));
       if (clamped === index && !animating) return;
       index = clamped;
-      locked = true;
       animateTo(topOf(deck[index]), updateActive);
-      startWatch();
+      lockFor(380 + COOLDOWN);
     };
 
     const advance = (down: boolean) => {
@@ -100,13 +96,12 @@ export default function SectionDeck() {
       const down = e.deltaY > 0;
       const dir = down ? 1 : -1;
       e.preventDefault();
-      lastWheel = performance.now();
 
       if (locked) {
         // direction reversal after animation done → release and advance
         if (!animating && dir !== lastDir) {
+          window.clearTimeout(unlockTimer);
           locked = false;
-          watching = false;
           advance(down);
         }
         return;
@@ -121,8 +116,8 @@ export default function SectionDeck() {
       e.preventDefault();
       if (locked) {
         if (!animating && (down ? 1 : -1) !== lastDir) {
+          window.clearTimeout(unlockTimer);
           locked = false;
-          watching = false;
           advance(down);
         }
         return;
@@ -151,8 +146,8 @@ export default function SectionDeck() {
       const down = dy > 0;
       if (locked && (animating || (down ? 1 : -1) === lastDir)) return;
       if (locked) {
+        window.clearTimeout(unlockTimer);
         locked = false;
-        watching = false;
       }
       advance(down);
     };
