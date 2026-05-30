@@ -19,7 +19,7 @@ import {
   linksCopy,
   listenCopy,
 } from "@/content/copy";
-import { media } from "@/content/media";
+import { media, heroVideos } from "@/content/media";
 
 const ctas = [
   { href: "#links", num: "01", label: "Links & Listen" },
@@ -42,7 +42,7 @@ export default function HomePage() {
         data-snap
         className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 overflow-hidden"
       >
-        <HeroVideo src={media.heroVideo} />
+        <HeroVideo sources={heroVideos} />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
@@ -257,8 +257,8 @@ export default function HomePage() {
         data-snap
         className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 border-t border-border"
       >
-        <div className="mx-auto w-full max-w-4xl">
-          <div className="flex items-end justify-between gap-8 mb-6">
+        <div className="mx-auto w-full max-w-5xl">
+          <div className="flex items-end justify-between gap-8 mb-4">
             <div>
               <div
                 className="rise text-[11px] uppercase tracking-[0.25em] text-muted mb-2"
@@ -267,7 +267,7 @@ export default function HomePage() {
                 {creativeCopy.caption}
               </div>
               <h2
-                className="rise font-display font-extralight text-[36px] md:text-[48px] tracking-[-0.03em] leading-[1]"
+                className="rise font-display font-extralight text-[32px] md:text-[44px] tracking-[-0.03em] leading-[1]"
                 style={{ transitionDelay: "120ms" }}
               >
                 {creativeCopy.title}
@@ -278,7 +278,7 @@ export default function HomePage() {
             <WorkGallery items={capabilities} />
           </div>
           <div
-            className="rise mt-8 md:mt-10 text-center font-sans font-light text-[12px] md:text-[13px] text-muted"
+            className="rise mt-5 md:mt-6 text-center font-sans font-light text-[12px] md:text-[13px] text-muted"
             style={{ transitionDelay: "380ms" }}
           >
             For inquiries —{" "}

@@ -69,19 +69,22 @@ body { overflow-x: clip; }
   transform: translateY(0) scale(1);
 }
 
-/* carousel slide reveal */
-.pop-now, .pop-hidden {
-  transition:
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+/* carousel: Ken Burns subtle zoom on the active image */
+@keyframes ken-burns {
+  0% { transform: scale(1.02); }
+  100% { transform: scale(1.09); }
 }
-.pop-hidden {
-  opacity: 0;
-  transform: translateY(16px);
+.ken-burns {
+  animation: ken-burns 7.5s ease-out forwards;
 }
-.pop-now {
-  opacity: 1;
-  transform: translateY(0);
+
+/* carousel: text rises in each time the slide changes (keyed by current) */
+@keyframes rise-now {
+  0% { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.rise-now {
+  animation: rise-now 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* hide the horizontal gallery scrollbar */
@@ -90,6 +93,7 @@ body { overflow-x: clip; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal-mask { clip-path: inset(0 0 0% 0); transition: none; }
-  .rise, .pop-now, .pop-hidden { opacity: 1; transform: none; transition: none; }
+  .rise, .rise-now { opacity: 1; transform: none; transition: none; animation: none; }
+  .ken-burns { animation: none; }
   .link-underline { transition: none; }
 }
