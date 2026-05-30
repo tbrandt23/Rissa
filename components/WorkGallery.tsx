@@ -4,135 +4,132 @@ import { useEffect, useRef, useState } from "react";
 import ImageFrame from "@/components/ImageFrame";
 import type { Capability } from "@/content/capabilities";
 
+const AUTO_ADVANCE_MS = 6000;
+
 export default function WorkGallery({ items }: { items: Capability[] }) {
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const intervalRef = useRef<number | null>(null);
 
+  const go = (i: number) => {
+    const n = items.length;
+    setCurrent(((i % n) + n) % n);
+  };
+  const next = () => go(current + 1);
+  const prev = () => go(current - 1);
+
+  // gentle auto-advance, pauses on user interaction
   useEffect(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        let bestIdx = current;
-        let bestRatio = 0;
-        entries.forEach((e) => {
-          if (e.intersectionRatio > bestRatio) {
-            const i = cardsRef.current.indexOf(e.target as HTMLDivElement);
-            if (i !== -1) {
-              bestRatio = e.intersectionRatio;
-              bestIdx = i;
-            }
-          }
-        });
-        if (bestRatio > 0.5) setCurrent(bestIdx);
-      },
-      { root: scroller, threshold: [0.3, 0.55, 0.8] },
-    );
-    cardsRef.current.forEach((c) => c && io.observe(c));
-    return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (paused) return;
+    intervalRef.current = window.setInterval(() => {
+      setCurrent((c) => (c + 1) % items.length);
+    }, AUTO_ADVANCE_MS);
+    return () => {
+      if (intervalRef.current) window.clearInterval(intervalRef.current);
+    };
+  }, [paused, items.length]);
 
-  const scrollToCard = (i: number) => {
-    const card = cardsRef.current[i];
-    const scroller = scrollerRef.current;
-    if (card && scroller) {
-      scroller.scrollTo({ left: card.offsetLeft - scroller.offsetLeft, behavior: "smooth" });
-    }
+  const interact = (fn: () => void) => () => {
+    setPaused(true);
+    fn();
   };
 
   return (
-    <div className="relative w-full">
+    <div
+      className="relative w-full"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {/* counter + hint */}
       <div className="mb-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.25em] text-muted">
         <span>
           {String(current + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
         </span>
-        <span className="hidden md:inline">↔ Swipe or use arrows</span>
+        <span className="hidden md:inline">{items[current].title}</span>
       </div>
-      <div
-        ref={scrollerRef}
-        className="gallery-scroller flex gap-5 md:gap-8 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-6 md:-mx-12 lg:-mx-20 px-6 md:px-12 lg:px-20"
-      >
-        {items.map((cap, i) => (
+
+      {/* carousel viewport with arrows */}
+      <div className="relative">
+        <div className="overflow-hidden">
           <div
-            key={cap.number}
-            ref={(el) => {
-              cardsRef.current[i] = el;
-            }}
-            className={`shrink-0 snap-start w-[78vw] md:w-[44vw] lg:w-[34vw] ${
-              i === current ? "is-current" : ""
-            }`}
+            className="flex transition-transform duration-[700ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{ transform: `translateX(-${current * 100}%)` }}
           >
-            <div className="flex flex-col">
-              <div className="pop" style={{ transitionDelay: "0ms" }}>
-                <ImageFrame
-                  src={cap.image}
-                  alt={cap.title}
-                  ratio="video"
-                  priority={i === 0}
-                />
-              </div>
-              <div className="mt-4 md:mt-5">
-                <div
-                  className="pop text-[10px] uppercase tracking-[0.3em] text-muted mb-2"
-                  style={{ transitionDelay: "160ms" }}
-                >
-                  Section {cap.number}
+            {items.map((cap, i) => (
+              <div key={cap.number} className="w-full shrink-0 px-2 md:px-4">
+                <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6 md:gap-10 items-center">
+                  <div className={i === current ? "pop-now" : "pop-hidden"}>
+                    <ImageFrame
+                      src={cap.image}
+                      alt={cap.title}
+                      ratio="video"
+                      priority={i === 0}
+                    />
+                  </div>
+                  <div className="md:pl-2">
+                    <div
+                      className={`text-[10px] uppercase tracking-[0.3em] text-muted mb-3 ${
+                        i === current ? "pop-now" : "pop-hidden"
+                      }`}
+                      style={{ transitionDelay: i === current ? "120ms" : "0ms" }}
+                    >
+                      Section {cap.number}
+                    </div>
+                    <h3
+                      className={`font-display font-extralight text-[24px] md:text-[30px] tracking-[-0.02em] mb-3 text-foreground ${
+                        i === current ? "pop-now" : "pop-hidden"
+                      }`}
+                      style={{ transitionDelay: i === current ? "200ms" : "0ms" }}
+                    >
+                      {cap.title}
+                    </h3>
+                    <p
+                      className={`font-sans font-light text-[14px] md:text-[15px] leading-[1.6] text-muted ${
+                        i === current ? "pop-now" : "pop-hidden"
+                      }`}
+                      style={{ transitionDelay: i === current ? "280ms" : "0ms" }}
+                    >
+                      {cap.description}
+                    </p>
+                  </div>
                 </div>
-                <h3
-                  className="pop font-display font-extralight text-[22px] md:text-[26px] tracking-[-0.02em] mb-2 text-foreground"
-                  style={{ transitionDelay: "240ms" }}
-                >
-                  {cap.title}
-                </h3>
-                <p
-                  className="pop font-sans font-light text-[13px] md:text-[14px] leading-[1.55] text-muted"
-                  style={{ transitionDelay: "320ms" }}
-                >
-                  {cap.description}
-                </p>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      {/* indicators + prev/next */}
-      <div className="mt-6 md:mt-8 flex items-center justify-between gap-6">
-        <button
-          type="button"
-          onClick={() => scrollToCard(Math.max(0, current - 1))}
-          disabled={current === 0}
-          aria-label="Previous"
-          className="h-10 w-10 md:h-11 md:w-11 inline-flex items-center justify-center border border-border text-foreground transition-colors duration-300 hover:border-foreground disabled:opacity-25 disabled:cursor-not-allowed"
-        >
-          <span aria-hidden className="text-[18px] leading-none">←</span>
-        </button>
-
-        <div className="flex items-center gap-2">
-          {items.map((it, i) => (
-            <button
-              key={it.number}
-              type="button"
-              aria-label={`Go to ${it.title}`}
-              onClick={() => scrollToCard(i)}
-              className={`h-[6px] transition-all duration-300 ${
-                i === current ? "w-10 bg-foreground" : "w-2 bg-muted/40 hover:bg-muted"
-              }`}
-            />
-          ))}
         </div>
 
+        {/* prominent prev / next arrows */}
         <button
           type="button"
-          onClick={() => scrollToCard(Math.min(items.length - 1, current + 1))}
-          disabled={current === items.length - 1}
-          aria-label="Next"
-          className="h-10 w-10 md:h-11 md:w-11 inline-flex items-center justify-center border border-border text-foreground transition-colors duration-300 hover:border-foreground disabled:opacity-25 disabled:cursor-not-allowed"
+          onClick={interact(prev)}
+          aria-label="Previous"
+          className="absolute left-0 md:-left-2 top-1/2 -translate-y-1/2 z-10 h-12 w-12 md:h-14 md:w-14 inline-flex items-center justify-center bg-background/70 backdrop-blur-sm border border-border text-foreground transition-all duration-300 hover:bg-background hover:border-foreground"
         >
-          <span aria-hidden className="text-[18px] leading-none">→</span>
+          <span aria-hidden className="text-[20px] md:text-[22px] leading-none">←</span>
         </button>
+        <button
+          type="button"
+          onClick={interact(next)}
+          aria-label="Next"
+          className="absolute right-0 md:-right-2 top-1/2 -translate-y-1/2 z-10 h-12 w-12 md:h-14 md:w-14 inline-flex items-center justify-center bg-background/70 backdrop-blur-sm border border-border text-foreground transition-all duration-300 hover:bg-background hover:border-foreground"
+        >
+          <span aria-hidden className="text-[20px] md:text-[22px] leading-none">→</span>
+        </button>
+      </div>
+
+      {/* dots */}
+      <div className="mt-6 md:mt-8 flex items-center justify-center gap-2">
+        {items.map((it, i) => (
+          <button
+            key={it.number}
+            type="button"
+            aria-label={`Go to ${it.title}`}
+            onClick={interact(() => go(i))}
+            className={`h-[6px] transition-all duration-300 ${
+              i === current ? "w-10 bg-foreground" : "w-2 bg-muted/40 hover:bg-muted"
+            }`}
+          />
+        ))}
       </div>
     </div>
   );

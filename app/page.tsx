@@ -22,10 +22,9 @@ import {
 import { media } from "@/content/media";
 
 const ctas = [
-  { href: "#links", num: "01", label: "Links" },
-  { href: "#listen", num: "02", label: "Listen" },
-  { href: "#submit", num: "03", label: "Send loops" },
-  { href: "#work", num: "04", label: "Work" },
+  { href: "#links", num: "01", label: "Links & Listen" },
+  { href: "#submit", num: "02", label: "Send loops" },
+  { href: "#work", num: "03", label: "Work" },
 ];
 
 type Intent = "loops" | "book";
@@ -43,18 +42,15 @@ export default function HomePage() {
         data-snap
         className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 overflow-hidden"
       >
-        {/* moody video background */}
         <HeroVideo src={media.heroVideo} />
-        {/* darken video for legibility */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
           style={{
             background:
-              "linear-gradient(180deg, rgba(10,10,10,0.65) 0%, rgba(10,10,10,0.55) 50%, rgba(10,10,10,0.85) 100%)",
+              "linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.45) 50%, rgba(10,10,10,0.8) 100%)",
           }}
         />
-        {/* warm depth glow over the video */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0"
@@ -119,27 +115,43 @@ export default function HomePage() {
         </Link>
       </section>
 
-      {/* LINKS */}
+      {/* LINKS + LISTEN — merged into one section */}
       <section
         id="links"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-16 border-t border-border"
       >
-        <div className="mx-auto w-full max-w-md">
+        <div className="mx-auto w-full max-w-2xl">
           <div className="rise" style={{ transitionDelay: "0ms" }}>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
-              {linksCopy.caption}
+            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-4">
+              {linksCopy.caption} & {listenCopy.caption}
             </div>
-            <h2 className="font-display font-extralight text-[40px] md:text-[56px] tracking-[-0.03em] leading-none mb-12 md:mb-16">
+            <h2 className="font-display font-extralight text-[36px] md:text-[48px] tracking-[-0.03em] leading-none mb-8 md:mb-10">
               {linksCopy.title}
             </h2>
           </div>
+
+          {/* mix player */}
+          <div className="rise mb-10 md:mb-12" style={{ transitionDelay: "160ms" }}>
+            <AudioPlayer
+              src={media.latestMixSrc}
+              artist={listenCopy.trackArtist}
+              title={listenCopy.trackTitle}
+              fallbackDuration={listenCopy.duration}
+            />
+          </div>
+
+          {/* divider */}
+          <div className="rise mb-6 text-[10px] uppercase tracking-[0.3em] text-muted" style={{ transitionDelay: "260ms" }}>
+            Elsewhere
+          </div>
+
           <div>
             {links.map((item, i) => (
               <div
                 key={item.platform}
                 className="rise"
-                style={{ transitionDelay: `${220 + i * 130}ms` }}
+                style={{ transitionDelay: `${320 + i * 90}ms` }}
               >
                 <LinkRow item={item} />
               </div>
@@ -148,56 +160,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* LISTEN — latest mix */}
-      <section
-        id="listen"
-        data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-20 border-t border-border"
-      >
-        <div className="mx-auto w-full max-w-2xl">
-          <div className="rise" style={{ transitionDelay: "0ms" }}>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-4">
-              {listenCopy.caption}
-            </div>
-            <h2 className="font-display font-extralight text-[36px] md:text-[52px] tracking-[-0.03em] leading-[1] mb-10">
-              {listenCopy.title}
-            </h2>
-          </div>
-          <div className="rise" style={{ transitionDelay: "180ms" }}>
-            <AudioPlayer
-              src={media.latestMixSrc}
-              artist={listenCopy.trackArtist}
-              title={listenCopy.trackTitle}
-              fallbackDuration={listenCopy.duration}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* SUBMIT — with intent toggle + EPK */}
+      {/* SUBMIT — prominent intent toggle, EPK link */}
       <section
         id="submit"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-16 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-14 border-t border-border"
       >
         <div className="mx-auto w-full max-w-2xl">
           <div className="rise" style={{ transitionDelay: "0ms" }}>
             <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-4">
               {submitCopy.caption}
             </div>
-            <h2 className="font-display font-extralight text-[32px] md:text-[44px] tracking-[-0.03em] leading-[1] mb-4">
-              {intent === "loops" ? submitCopy.title : submitCopy.bookingTitle}
-            </h2>
-            <p className="font-sans font-light text-[14px] md:text-[15px] leading-[1.5] text-muted max-w-[520px] mb-5">
-              {intent === "loops" ? submitCopy.intro : submitCopy.bookingIntro}
-            </p>
-            <div className="inline-flex border border-border mb-7">
+
+            {/* prominent intent toggle, above heading */}
+            <div className="grid grid-cols-2 border border-border mb-6 w-full">
               {(["loops", "book"] as Intent[]).map((k) => (
                 <button
                   key={k}
                   type="button"
                   onClick={() => setIntent(k)}
-                  className={`px-4 py-2 text-[11px] uppercase tracking-[0.25em] transition-colors duration-300 ${
+                  className={`py-3 text-[12px] uppercase tracking-[0.25em] transition-colors duration-300 ${
                     intent === k
                       ? "bg-foreground text-background"
                       : "text-muted hover:text-foreground"
@@ -207,15 +189,20 @@ export default function HomePage() {
                 </button>
               ))}
             </div>
+
+            <h2 className="font-display font-extralight text-[32px] md:text-[44px] tracking-[-0.03em] leading-[1] mb-4">
+              {intent === "loops" ? submitCopy.title : submitCopy.bookingTitle}
+            </h2>
+            <p className="font-sans font-light text-[14px] md:text-[15px] leading-[1.5] text-muted max-w-[520px] mb-5">
+              {intent === "loops" ? submitCopy.intro : submitCopy.bookingIntro}
+            </p>
           </div>
 
           <div className="rise" style={{ transitionDelay: "160ms" }}>
             {submitted ? (
               <div className="border border-border px-6 py-10 text-center">
                 <div className="font-display font-light text-[20px] md:text-[22px] mb-2">
-                  {intent === "loops"
-                    ? "Submission received."
-                    : "Inquiry received."}
+                  {intent === "loops" ? "Submission received." : "Inquiry received."}
                 </div>
                 <div className="text-[11px] uppercase tracking-[0.2em] text-muted">
                   Thank you — I&apos;ll be in touch
@@ -264,14 +251,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WORK */}
+      {/* WORK — carousel + inline contact line (no separate Contact section) */}
       <section
         id="work"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-14 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 border-t border-border"
       >
-        <div className="mx-auto w-full max-w-6xl">
-          <div className="flex items-end justify-between gap-8 mb-6 md:mb-8">
+        <div className="mx-auto w-full max-w-4xl">
+          <div className="flex items-end justify-between gap-8 mb-6">
             <div>
               <div
                 className="rise text-[11px] uppercase tracking-[0.25em] text-muted mb-2"
@@ -286,40 +273,22 @@ export default function HomePage() {
                 {creativeCopy.title}
               </h2>
             </div>
-            <div
-              className="rise hidden md:block text-[10px] uppercase tracking-[0.25em] text-muted text-right max-w-[260px] leading-[1.6]"
-              style={{ transitionDelay: "220ms" }}
-            >
-              {creativeCopy.intro}
-            </div>
           </div>
-          <div className="rise" style={{ transitionDelay: "280ms" }}>
+          <div className="rise" style={{ transitionDelay: "240ms" }}>
             <WorkGallery items={capabilities} />
           </div>
-        </div>
-      </section>
-
-      {/* CONTACT */}
-      <section
-        data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-24 border-t border-border"
-      >
-        <div className="mx-auto w-full max-w-2xl text-center">
-          <div className="rise" style={{ transitionDelay: "0ms" }}>
-            <div className="text-[11px] uppercase tracking-[0.25em] text-muted mb-8">
-              Contact
-            </div>
-            <p className="font-display font-extralight text-[24px] md:text-[34px] tracking-[-0.02em] leading-[1.2] text-foreground mb-6">
-              For portfolio inquiries
-            </p>
-          </div>
-          <a
-            href={`mailto:${creativeCopy.contactEmail}`}
-            className="rise inline-block font-sans font-light text-[18px] md:text-[22px] text-foreground link-underline"
-            style={{ transitionDelay: "180ms" }}
+          <div
+            className="rise mt-8 md:mt-10 text-center font-sans font-light text-[12px] md:text-[13px] text-muted"
+            style={{ transitionDelay: "380ms" }}
           >
-            {creativeCopy.contactEmail}
-          </a>
+            For inquiries —{" "}
+            <a
+              href={`mailto:${creativeCopy.contactEmail}`}
+              className="text-foreground link-underline"
+            >
+              {creativeCopy.contactEmail}
+            </a>
+          </div>
         </div>
       </section>
     </>

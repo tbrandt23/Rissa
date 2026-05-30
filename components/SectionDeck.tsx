@@ -2,9 +2,13 @@
 
 import { useEffect } from "react";
 
-// JS-driven full-page deck: every [data-snap] is a snap target.
-// One gesture = one section. Reverse-direction scroll releases the lock
-// instantly so going back up doesn't feel held by the previous animation.
+// JS-driven full-page deck.
+//
+// Gesture detection: any wheel event arriving <200ms after the previous one
+// is treated as the same gesture (or its momentum tail) and ignored.
+// Only a "new" gesture (≥200ms gap of silence) advances. This is the only
+// model that reliably distinguishes a Mac trackpad swipe from its 1-second
+// momentum tail. Plus a 550ms hard rate-limit between advances as a safety.
 export default function SectionDeck() {
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -20,7 +24,6 @@ export default function SectionDeck() {
       deck.forEach((s, i) => s.classList.toggle("is-active", i === index));
     };
 
-    // open at the top, but only on real navigations (initial mount + bfcache restore)
     window.scrollTo({ top: 0, behavior: "auto" });
     updateActive();
     const onPageShow = () => {
@@ -32,9 +35,7 @@ export default function SectionDeck() {
 
     if (reduce) {
       deck.forEach((s) => s.classList.add("is-active"));
-      return () => {
-        window.removeEventListener("pageshow", onPageShow);
-      };
+      return () => window.removeEventListener("pageshow", onPageShow);
     }
 
     // ---- controlled scroll animation ----
@@ -45,7 +46,7 @@ export default function SectionDeck() {
       cancelAnimationFrame(rafScroll);
       const startY = window.scrollY;
       const dist = targetY - startY;
-      const duration = 380;
+      const duration = 480;
       const start = performance.now();
       animating = true;
       const step = (now: number) => {
@@ -61,52 +62,38 @@ export default function SectionDeck() {
       rafScroll = requestAnimationFrame(step);
     };
 
-    // ---- gesture lock: simple fixed cooldown after each advance ----
-    // Predictable: ignore wheel during animation + a short cooldown, then
-    // the next wheel event advances. No momentum tracking (which was
-    // trackpad-dependent and either too sticky or too loose).
-    let locked = false;
-    let lastDir = 0;
-    let unlockTimer = 0;
-    const COOLDOWN = 180; // post-animation grace to absorb gesture tail
-
-    const lockFor = (totalMs: number) => {
-      locked = true;
-      window.clearTimeout(unlockTimer);
-      unlockTimer = window.setTimeout(() => {
-        locked = false;
-      }, totalMs);
-    };
+    let lastWheelTime = 0;
+    let lastAdvanceTime = 0;
+    const NEW_GESTURE_GAP = 200; // ms of silence required to count as a new gesture
+    const MIN_ADVANCE_INTERVAL = 550; // hard rate-limit between advances
 
     const goTo = (i: number) => {
       const clamped = Math.max(0, Math.min(i, deck.length - 1));
       if (clamped === index && !animating) return;
       index = clamped;
       animateTo(topOf(deck[index]), updateActive);
-      lockFor(380 + COOLDOWN);
     };
 
     const advance = (down: boolean) => {
-      lastDir = down ? 1 : -1;
+      lastAdvanceTime = performance.now();
       goTo(index + (down ? 1 : -1));
+    };
+
+    const tryAdvance = (down: boolean) => {
+      const now = performance.now();
+      if (now - lastAdvanceTime < MIN_ADVANCE_INTERVAL) return;
+      advance(down);
     };
 
     const onWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaY) < 1) return;
-      const down = e.deltaY > 0;
-      const dir = down ? 1 : -1;
       e.preventDefault();
-
-      if (locked) {
-        // direction reversal after animation done → release and advance
-        if (!animating && dir !== lastDir) {
-          window.clearTimeout(unlockTimer);
-          locked = false;
-          advance(down);
-        }
-        return;
-      }
-      advance(down);
+      const now = performance.now();
+      const gap = now - lastWheelTime;
+      lastWheelTime = now;
+      // Continuation of existing gesture / momentum tail — ignore
+      if (gap < NEW_GESTURE_GAP) return;
+      tryAdvance(e.deltaY > 0);
     };
 
     const onKey = (e: KeyboardEvent) => {
@@ -114,15 +101,7 @@ export default function SectionDeck() {
       const up = ["ArrowUp", "PageUp"].includes(e.key);
       if (!down && !up) return;
       e.preventDefault();
-      if (locked) {
-        if (!animating && (down ? 1 : -1) !== lastDir) {
-          window.clearTimeout(unlockTimer);
-          locked = false;
-          advance(down);
-        }
-        return;
-      }
-      advance(down);
+      tryAdvance(down);
     };
 
     let touchX = 0;
@@ -134,22 +113,15 @@ export default function SectionDeck() {
     const onTouchMove = (e: TouchEvent) => {
       const dx = touchX - e.touches[0].clientX;
       const dy = touchY - e.touches[0].clientY;
-      // let native handle clearly horizontal swipes (carousel)
-      if (Math.abs(dx) > Math.abs(dy)) return;
+      if (Math.abs(dx) > Math.abs(dy)) return; // horizontal — let carousel handle
       if (e.cancelable) e.preventDefault();
     };
     const onTouchEnd = (e: TouchEvent) => {
       const dx = touchX - e.changedTouches[0].clientX;
       const dy = touchY - e.changedTouches[0].clientY;
-      if (Math.abs(dx) > Math.abs(dy)) return; // horizontal — carousel handled it
+      if (Math.abs(dx) > Math.abs(dy)) return;
       if (Math.abs(dy) < 45) return;
-      const down = dy > 0;
-      if (locked && (animating || (down ? 1 : -1) === lastDir)) return;
-      if (locked) {
-        window.clearTimeout(unlockTimer);
-        locked = false;
-      }
-      advance(down);
+      tryAdvance(dy > 0);
     };
 
     const onClick = (e: MouseEvent) => {
@@ -162,7 +134,10 @@ export default function SectionDeck() {
       e.preventDefault();
       const target = document.querySelector(id) as HTMLElement | null;
       const i = target ? deck.indexOf(target) : -1;
-      if (i !== -1 && !animating) goTo(i);
+      if (i !== -1 && !animating) {
+        lastAdvanceTime = performance.now();
+        goTo(i);
+      }
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });

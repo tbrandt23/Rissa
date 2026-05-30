@@ -69,16 +69,17 @@ body { overflow-x: clip; }
   transform: translateY(0) scale(1);
 }
 
-/* carousel card reveal: pops only when the Work section is active AND
-   this is the current card. Avoids firing while the user is still elsewhere. */
-.pop {
-  opacity: 0;
-  transform: translateY(20px);
+/* carousel slide reveal */
+.pop-now, .pop-hidden {
   transition:
     opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.is-active .is-current .pop {
+.pop-hidden {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.pop-now {
   opacity: 1;
   transform: translateY(0);
 }
@@ -89,6 +90,6 @@ body { overflow-x: clip; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal-mask { clip-path: inset(0 0 0% 0); transition: none; }
-  .rise, .pop { opacity: 1; transform: none; transition: none; }
+  .rise, .pop-now, .pop-hidden { opacity: 1; transform: none; transition: none; }
   .link-underline { transition: none; }
 }

@@ -19,7 +19,7 @@ export default function HeroVideo({ src }: { src: string }) {
       preload="auto"
       onError={() => setOk(false)}
       onCanPlay={() => ref.current?.play().catch(() => {})}
-      className="absolute inset-0 w-full h-full object-cover opacity-[0.32] pointer-events-none z-0"
+      className="absolute inset-0 w-full h-full object-cover opacity-[0.45] pointer-events-none z-0"
       aria-hidden="true"
     />
   );
