@@ -42,6 +42,8 @@ export default function HomePage() {
         data-snap
         className="relative min-h-screen w-full px-6 md:px-12 lg:px-20 pt-24 md:pt-32 pb-24 overflow-hidden"
       >
+        {/* ambient base — always present so the hero never looks empty */}
+        <div aria-hidden="true" className="hero-ambient z-0" />
         <HeroVideo sources={heroVideos} />
         <div
           aria-hidden="true"

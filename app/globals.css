@@ -78,6 +78,25 @@ body { overflow-x: clip; }
   animation: ken-burns 7.5s ease-out forwards;
 }
 
+/* hero ambient: slow drifting warm light. Always visible — gives the hero
+   atmosphere even when the video sources fail to load. */
+@keyframes ambient-drift {
+  0%   { transform: translate(0%, 0%) scale(1.02); }
+  33%  { transform: translate(2%, -1.5%) scale(1.06); }
+  66%  { transform: translate(-1.5%, 1.5%) scale(1.04); }
+  100% { transform: translate(0%, 0%) scale(1.02); }
+}
+.hero-ambient {
+  position: absolute;
+  inset: -8%;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 30% 65%, rgba(237,234,227,0.08) 0%, transparent 60%),
+    radial-gradient(45% 35% at 75% 25%, rgba(237,234,227,0.05) 0%, transparent 65%),
+    radial-gradient(70% 60% at 50% 50%, rgba(31,30,27,0.4) 0%, transparent 75%);
+  animation: ambient-drift 26s ease-in-out infinite;
+}
+
 /* carousel: text rises in each time the slide changes (keyed by current) */
 @keyframes rise-now {
   0% { opacity: 0; transform: translateY(14px); }
