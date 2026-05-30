@@ -9,20 +9,23 @@
 //   3. model with flash photography
 //   4. someone working on a computer / creative process
 //
-// HOW TO SWAP IN REAL FILES (recommended for reliability):
-//   1. Drop .mp4 files into  public/videos/  named  hero-1.mp4 ... hero-4.mp4
-//   2. They'll take precedence automatically — nothing else to do.
+// These point at real, verified-working Pexels CDN clips (royalty-free, free to
+// use). Any URL that 404s is silently skipped by HeroVideo.tsx — the surviving
+// sources keep rotating, and if ALL fail the CSS hero-ambient animation still
+// gives the hero atmosphere.
 //
-// HOW TO SWAP IN URLS:
-//   Replace any string in this array with a verified-working .mp4 URL.
-//   Any URL that 404s is silently skipped by HeroVideo.tsx — the surviving
-//   sources keep rotating, and if ALL fail the CSS hero-ambient animation
-//   still gives the hero atmosphere.
+// HOW TO SWAP IN REAL FILES LATER (most reliable):
+//   1. Drop .mp4 files into  public/videos/  named  hero-1.mp4 ... hero-4.mp4
+//   2. Point the slots below at "/videos/hero-1.mp4" etc. — nothing else to do.
 export const heroVideos = [
-  "/videos/hero-1.mp4", // hand DJing — drop file at public/videos/hero-1.mp4
-  "/videos/hero-2.mp4", // dim studio
-  "/videos/hero-3.mp4", // flash photoshoot
-  "/videos/hero-4.mp4", // person on computer / process
+  // 1. hand DJing / decks — close-up of deejay hands performing a mix (Pexels 4043972)
+  "https://videos.pexels.com/video-files/4043972/4043972-hd_1920_1080_24fps.mp4",
+  // 2. dim studio — recording studio with advanced equipment (Pexels 3910618)
+  "https://videos.pexels.com/video-files/3910618/3910618-hd_1920_1080_25fps.mp4",
+  // 3. model with flash photography — model + photographer photoshoot (Pexels 3917516)
+  "https://videos.pexels.com/video-files/3917516/3917516-uhd_2732_1440_25fps.mp4",
+  // 4. person working on a computer — working in a dim room on a laptop (Pexels 20563164)
+  "https://videos.pexels.com/video-files/20563164/20563164-hd_1920_1080_30fps.mp4",
 ];
 
 export const media = {

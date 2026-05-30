@@ -110,9 +110,29 @@ body { overflow-x: clip; }
 .gallery-scroller { scrollbar-width: none; }
 .gallery-scroller::-webkit-scrollbar { display: none; }
 
+/* experiments-style text panel: clip-path reveal from the bottom edge,
+   echoing the "blinds" reveal on mohamedshehata.net's experiments section.
+   Keyed to the active slide so it replays on every change. */
+@keyframes clip-rise {
+  0%   { clip-path: inset(100% 0 0 0); transform: translateY(34px); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { clip-path: inset(0 0 0 0); transform: translateY(0); opacity: 1; }
+}
+.clip-rise { animation: clip-rise 1.1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* per-slide progress segment fill — sweeps over the auto-advance interval.
+   Duration + play-state are set inline so hover can freeze it. */
+@keyframes seg-fill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.seg-fill { transform-origin: left center; animation-name: seg-fill; animation-timing-function: linear; animation-fill-mode: both; }
+
 @media (prefers-reduced-motion: reduce) {
   .reveal-mask { clip-path: inset(0 0 0% 0); transition: none; }
   .rise, .rise-now { opacity: 1; transform: none; transition: none; animation: none; }
+  .clip-rise { clip-path: inset(0 0 0 0); opacity: 1; transform: none; animation: none; }
+  .seg-fill { animation: none; }
   .ken-burns { animation: none; }
   .link-underline { transition: none; }
 }

@@ -259,29 +259,13 @@ export default function HomePage() {
         data-snap
         className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 border-t border-border"
       >
-        <div className="mx-auto w-full max-w-5xl">
-          <div className="flex items-end justify-between gap-8 mb-4">
-            <div>
-              <div
-                className="rise text-[11px] uppercase tracking-[0.25em] text-muted mb-2"
-                style={{ transitionDelay: "0ms" }}
-              >
-                {creativeCopy.caption}
-              </div>
-              <h2
-                className="rise font-display font-extralight text-[32px] md:text-[44px] tracking-[-0.03em] leading-[1]"
-                style={{ transitionDelay: "120ms" }}
-              >
-                {creativeCopy.title}
-              </h2>
-            </div>
-          </div>
-          <div className="rise" style={{ transitionDelay: "240ms" }}>
-            <WorkGallery items={capabilities} />
+        <div className="mx-auto w-full max-w-6xl">
+          <div className="rise" style={{ transitionDelay: "120ms" }}>
+            <WorkGallery items={capabilities} label={creativeCopy.caption} />
           </div>
           <div
             className="rise mt-5 md:mt-6 text-center font-sans font-light text-[12px] md:text-[13px] text-muted"
-            style={{ transitionDelay: "380ms" }}
+            style={{ transitionDelay: "320ms" }}
           >
             For inquiries —{" "}
             <a
