@@ -70,11 +70,23 @@ export default function WorkGallery() {
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [threshold, setThreshold] = useState(40);
   const [totalStamped, setTotalStamped] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Gallery lightbox state
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [galleryDir, setGalleryDir] = useState(0); // 1 = next, -1 = prev
+
+  const touchStartX = useRef(0);
+
+  // Mobile detection via pointer media query
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none) and (pointer: coarse)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   // Keep thresholdRef in sync with threshold state
   useEffect(() => {
@@ -97,6 +109,42 @@ export default function WorkGallery() {
     obs.observe(section, { attributes: true, attributeFilter: ["class"] });
     return () => obs.disconnect();
   }, []);
+
+  // Touch-to-stamp handler (mobile only)
+  useEffect(() => {
+    if (!isActive || !isMobile) return;
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastStampPos.current.x;
+      const dy = touch.clientY - lastStampPos.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < STAMP_DISTANCE) return;
+
+      lastStampPos.current = { x: touch.clientX, y: touch.clientY };
+
+      const photo = PHOTOS[photoIndex.current % PHOTOS.length];
+      photoIndex.current += 1;
+
+      const h = DISPLAY_HEIGHT * 0.45; // smaller on mobile
+      const w = h * photo.ar;
+
+      // No scatter offset on touch — stamp directly at finger position
+      const x = touch.clientX;
+      const y = touch.clientY;
+
+      const id = nextStampId.current++;
+
+      setStamps((prev) => {
+        const next = [...prev, { id, x, y, w, h, photo }];
+        return next.length > thresholdRef.current ? next.slice(-thresholdRef.current) : next;
+      });
+      setTotalStamped((t) => t + 1);
+    };
+
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    return () => window.removeEventListener("touchmove", handleTouchMove);
+  }, [isActive, isMobile]);
 
   // Attach/detach mousemove listener based on isActive
   useEffect(() => {
@@ -194,6 +242,7 @@ export default function WorkGallery() {
               exit={{ opacity: 0, transition: { duration: 0.6 } }}
               transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
               onDoubleClick={() => openGallery(stamp.photo)}
+              onClick={isMobile ? () => openGallery(stamp.photo) : undefined}
             >
               <img
                 src={stamp.photo.src}
@@ -259,7 +308,7 @@ export default function WorkGallery() {
               fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
             }}
           >
-            Move mouse to explore · Double-click to open
+            {isMobile ? "Drag to stamp · Tap to open" : "Move mouse to explore · Double-click to open"}
           </p>
         </div>
       </div>
@@ -284,6 +333,11 @@ export default function WorkGallery() {
               overflow: "hidden",
             }}
             onClick={() => setGalleryOpen(false)}
+            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              const dx = touchStartX.current - e.changedTouches[0].clientX;
+              if (Math.abs(dx) > 50) navigate(dx > 0 ? 1 : -1);
+            }}
           >
             {/* Sliding image */}
             <AnimatePresence custom={galleryDir} mode="popLayout">
@@ -458,62 +512,64 @@ export default function WorkGallery() {
             ))}
           </nav>
 
-          {/* Center-right: threshold control */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              fontVariantNumeric: "tabular-nums",
-            }}
-          >
-            <span style={{ color: "#6B6862" }}>Threshold:</span>
-            <button
-              onClick={() => {
-                const t = Math.max(2, threshold - 1);
-                setThreshold(t);
-                thresholdRef.current = t;
-                setStamps((s) => s.slice(-t));
-              }}
+          {/* Center-right: threshold control (desktop only) */}
+          {!isMobile && (
+            <div
               style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 13,
-                color: "#EDEAE3",
-                padding: "0 4px",
-              }}
-            >
-              −
-            </button>
-            <span
-              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
                 fontVariantNumeric: "tabular-nums",
-                minWidth: "4ch",
-                textAlign: "center",
-                color: "#EDEAE3",
               }}
             >
-              {String(threshold).padStart(4, "0")}
-            </span>
-            <button
-              onClick={() => {
-                const t = Math.min(140, threshold + 1);
-                setThreshold(t);
-                thresholdRef.current = t;
-              }}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontSize: 13,
-                color: "#EDEAE3",
-                padding: "0 4px",
-              }}
-            >
-              +
-            </button>
-          </div>
+              <span style={{ color: "#6B6862" }}>Threshold:</span>
+              <button
+                onClick={() => {
+                  const t = Math.max(2, threshold - 1);
+                  setThreshold(t);
+                  thresholdRef.current = t;
+                  setStamps((s) => s.slice(-t));
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: 13,
+                  color: "#EDEAE3",
+                  padding: "0 4px",
+                }}
+              >
+                −
+              </button>
+              <span
+                style={{
+                  fontVariantNumeric: "tabular-nums",
+                  minWidth: "4ch",
+                  textAlign: "center",
+                  color: "#EDEAE3",
+                }}
+              >
+                {String(threshold).padStart(4, "0")}
+              </span>
+              <button
+                onClick={() => {
+                  const t = Math.min(140, threshold + 1);
+                  setThreshold(t);
+                  thresholdRef.current = t;
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: 13,
+                  color: "#EDEAE3",
+                  padding: "0 4px",
+                }}
+              >
+                +
+              </button>
+            </div>
+          )}
 
           {/* Right: session stamp counter */}
           <span style={{ fontVariantNumeric: "tabular-nums", color: "#6B6862" }}>
