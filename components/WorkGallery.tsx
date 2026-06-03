@@ -226,7 +226,7 @@ export default function WorkGallery() {
             style={{
               fontSize: 11,
               letterSpacing: "0.28em",
-              color: "#3a3a3a",
+              color: "rgba(237,234,227,0.4)",
               textTransform: "uppercase",
               marginBottom: 10,
               fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
@@ -241,7 +241,7 @@ export default function WorkGallery() {
               fontSize: "clamp(52px, 8vw, 110px)",
               lineHeight: 0.92,
               letterSpacing: "-0.03em",
-              color: "#1a1a1a",
+              color: "rgba(237,234,227,0.18)",
               margin: 0,
             }}
           >
@@ -254,7 +254,7 @@ export default function WorkGallery() {
               marginTop: 20,
               fontSize: 11,
               letterSpacing: "0.2em",
-              color: "#2e2e2e",
+              color: "rgba(237,234,227,0.3)",
               textTransform: "uppercase",
               fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
             }}
