@@ -67,6 +67,7 @@ export default function WorkGallery() {
   const thresholdRef = useRef<number>(40);
 
   const [isActive, setIsActive] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [threshold, setThreshold] = useState(40);
   const [totalStamped, setTotalStamped] = useState(0);
@@ -75,6 +76,45 @@ export default function WorkGallery() {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [galleryDir, setGalleryDir] = useState(0); // 1 = next, -1 = prev
+
+  const touchStartX = useRef(0);
+
+  // Mobile detection via pointer media query
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: none) and (pointer: coarse)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Auto-scatter: when section activates on mobile, drop all photos at random positions
+  useEffect(() => {
+    if (!isActive || !isMobile) return;
+    setStamps([]);
+    setTotalStamped(0);
+    nextStampId.current = 0;
+    photoIndex.current = 0;
+
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    PHOTOS.forEach((photo, i) => {
+      const t = setTimeout(() => {
+        const h = DISPLAY_HEIGHT * 0.45;
+        const w = h * photo.ar;
+        const x = w / 2 + Math.random() * (window.innerWidth - w);
+        const y = h / 2 + Math.random() * (window.innerHeight - h - 60);
+        const id = nextStampId.current++;
+        setStamps((prev) => {
+          const next = [...prev, { id, x, y, w, h, photo }];
+          return next.length > thresholdRef.current ? next.slice(-thresholdRef.current) : next;
+        });
+        setTotalStamped((n) => n + 1);
+      }, i * 180);
+      timeouts.push(t);
+    });
+
+    return () => timeouts.forEach(clearTimeout);
+  }, [isActive, isMobile]);
 
   // Keep thresholdRef in sync with threshold state
   useEffect(() => {
@@ -194,6 +234,7 @@ export default function WorkGallery() {
               exit={{ opacity: 0, transition: { duration: 0.6 } }}
               transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
               onDoubleClick={() => openGallery(stamp.photo)}
+              onClick={isMobile ? () => openGallery(stamp.photo) : undefined}
             >
               <img
                 src={stamp.photo.src}
@@ -259,7 +300,7 @@ export default function WorkGallery() {
               fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
             }}
           >
-            Move mouse to explore · Double-click to open
+            {isMobile ? "Tap any image to browse" : "Move mouse to explore · Double-click to open"}
           </p>
         </div>
       </div>
@@ -284,6 +325,11 @@ export default function WorkGallery() {
               overflow: "hidden",
             }}
             onClick={() => setGalleryOpen(false)}
+            onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              const dx = touchStartX.current - e.changedTouches[0].clientX;
+              if (Math.abs(dx) > 50) navigate(dx > 0 ? 1 : -1);
+            }}
           >
             {/* Sliding image */}
             <AnimatePresence custom={galleryDir} mode="popLayout">
@@ -458,8 +504,8 @@ export default function WorkGallery() {
             ))}
           </nav>
 
-          {/* Center-right: threshold control */}
-          <div
+          {/* Center-right: threshold control (desktop only) */}
+          {!isMobile && <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -513,7 +559,7 @@ export default function WorkGallery() {
             >
               +
             </button>
-          </div>
+          </div>}
 
           {/* Right: session stamp counter */}
           <span style={{ fontVariantNumeric: "tabular-nums", color: "#6B6862" }}>
