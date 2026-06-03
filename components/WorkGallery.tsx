@@ -212,30 +212,56 @@ export default function WorkGallery() {
           ))}
         </AnimatePresence>
 
-        {/* Idle state */}
-        {stamps.length === 0 && (
-          <div
+        {/* Section title — sits behind stamps, gets buried as cursor moves */}
+        <div
+          style={{
+            position: "absolute",
+            top: 88,
+            left: 40,
+            pointerEvents: "none",
+            zIndex: 0,
+          }}
+        >
+          <p
             style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              pointerEvents: "none",
+              fontSize: 11,
+              letterSpacing: "0.28em",
+              color: "#3a3a3a",
+              textTransform: "uppercase",
+              marginBottom: 10,
+              fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
             }}
           >
-            <span
-              style={{
-                fontSize: 12,
-                letterSpacing: "0.15em",
-                color: "#444",
-                textTransform: "uppercase",
-              }}
-            >
-              Move your cursor
-            </span>
-          </div>
-        )}
+            Selected Work
+          </p>
+          <h2
+            style={{
+              fontFamily: "'Cabinet Grotesk', ui-sans-serif, system-ui, sans-serif",
+              fontWeight: 200,
+              fontSize: "clamp(52px, 8vw, 110px)",
+              lineHeight: 0.92,
+              letterSpacing: "-0.03em",
+              color: "#1a1a1a",
+              margin: 0,
+            }}
+          >
+            Creative
+            <br />
+            Gallery
+          </h2>
+          <p
+            style={{
+              marginTop: 20,
+              fontSize: 11,
+              letterSpacing: "0.2em",
+              color: "#2e2e2e",
+              textTransform: "uppercase",
+              fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
+            }}
+          >
+            Move mouse to explore · Double-click to open
+          </p>
+        </div>
       </div>
 
       {/* Gallery lightbox — opens on double-click */}
