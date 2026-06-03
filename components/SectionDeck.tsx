@@ -46,7 +46,7 @@ export default function SectionDeck() {
       cancelAnimationFrame(rafScroll);
       const startY = window.scrollY;
       const dist = targetY - startY;
-      const duration = 480;
+      const duration = 340;
       const start = performance.now();
       animating = true;
       const step = (now: number) => {

@@ -102,9 +102,16 @@ export default function WorkGallery() {
     setStamps((s) => s.slice(-threshold));
   }, [threshold]);
 
-  // Clear gallery when leaving the work section
+  // Reset everything when leaving the work section — blank slate on return
   useEffect(() => {
-    if (!isActive) setGalleryOpen(false);
+    if (!isActive) {
+      setGalleryOpen(false);
+      setStamps([]);
+      setTotalStamped(0);
+      nextStampId.current = 0;
+      photoIndex.current = 0;
+      lastStampPos.current = { x: -9999, y: -9999 };
+    }
   }, [isActive]);
 
   // MutationObserver to detect is-active class from SectionDeck
@@ -228,8 +235,9 @@ export default function WorkGallery() {
           overflow: "hidden",
           background: "#0A0A0A",
           opacity: isActive ? 1 : 0,
+          display: isActive ? "block" : "none",
           pointerEvents: isActive ? "auto" : "none",
-          transition: "opacity 0.4s ease",
+          willChange: "opacity",
           zIndex: 30,
         }}
       >
