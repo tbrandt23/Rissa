@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 // px height of every stamped image; width follows aspect ratio
 const DISPLAY_HEIGHT = 560;
@@ -42,6 +42,22 @@ type Stamp = {
   photo: (typeof PHOTOS)[0];
 };
 
+// Slide animation variants for gallery navigation
+const slideVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (dir: number) => ({
+    x: dir < 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
+};
+
 export default function WorkGallery() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +70,11 @@ export default function WorkGallery() {
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [threshold, setThreshold] = useState(40);
   const [totalStamped, setTotalStamped] = useState(0);
-  const [selectedStampId, setSelectedStampId] = useState<number | null>(null);
+
+  // Gallery lightbox state
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [galleryDir, setGalleryDir] = useState(0); // 1 = next, -1 = prev
 
   // Keep thresholdRef in sync with threshold state
   useEffect(() => {
@@ -62,16 +82,9 @@ export default function WorkGallery() {
     setStamps((s) => s.slice(-threshold));
   }, [threshold]);
 
-  // Clear zoom when the selected stamp gets culled from the visible array
+  // Clear gallery when leaving the work section
   useEffect(() => {
-    if (selectedStampId !== null && !stamps.find((s) => s.id === selectedStampId)) {
-      setSelectedStampId(null);
-    }
-  }, [stamps, selectedStampId]);
-
-  // Clear zoom when leaving the work section
-  useEffect(() => {
-    if (!isActive) setSelectedStampId(null);
+    if (!isActive) setGalleryOpen(false);
   }, [isActive]);
 
   // MutationObserver to detect is-active class from SectionDeck
@@ -122,22 +135,45 @@ export default function WorkGallery() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [isActive]);
 
+  // Keyboard navigation for gallery
+  useEffect(() => {
+    if (!galleryOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") navigate(1);
+      else if (e.key === "ArrowLeft") navigate(-1);
+      else if (e.key === "Escape") setGalleryOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [galleryOpen, galleryIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const navigate = (dir: number) => {
+    setGalleryDir(dir);
+    setGalleryIndex((i) => (i + dir + PHOTOS.length) % PHOTOS.length);
+  };
+
+  const openGallery = (photo: (typeof PHOTOS)[0]) => {
+    const idx = PHOTOS.findIndex((p) => p.src === photo.src);
+    setGalleryDir(0);
+    setGalleryIndex(idx >= 0 ? idx : 0);
+    setGalleryOpen(true);
+  };
+
   return (
-    <LayoutGroup>
-      {/* Root container — just a div for the MutationObserver ref */}
+    <>
+      {/* Root container — anchor for MutationObserver */}
       <div ref={containerRef} />
 
-      {/* Fixed stamp layer — white bg, covers viewport, hidden when not active */}
+      {/* Fixed stamp layer — dark bg, covers viewport, hidden when not active */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           overflow: "hidden",
-          background: "#ffffff",
+          background: "#0A0A0A",
           opacity: isActive ? 1 : 0,
           pointerEvents: isActive ? "auto" : "none",
           transition: "opacity 0.4s ease",
-          cursor: selectedStampId !== null ? "zoom-out" : "none",
           zIndex: 30,
         }}
       >
@@ -145,20 +181,19 @@ export default function WorkGallery() {
           {stamps.map((stamp) => (
             <motion.div
               key={stamp.id}
-              layoutId={`stamp-${stamp.id}`}
               style={{
                 position: "absolute",
                 left: stamp.x - stamp.w / 2,
                 top: stamp.y - stamp.h / 2,
                 width: stamp.w,
                 height: stamp.h,
-                visibility: selectedStampId === stamp.id ? "hidden" : "visible",
+                cursor: "pointer",
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.6 } }}
               transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
-              onClick={() => setSelectedStampId(stamp.id)}
+              onDoubleClick={() => openGallery(stamp.photo)}
             >
               <img
                 src={stamp.photo.src}
@@ -177,7 +212,7 @@ export default function WorkGallery() {
           ))}
         </AnimatePresence>
 
-        {/* Idle state — shown only when no stamps yet */}
+        {/* Idle state */}
         {stamps.length === 0 && (
           <div
             style={{
@@ -193,7 +228,7 @@ export default function WorkGallery() {
               style={{
                 fontSize: 12,
                 letterSpacing: "0.15em",
-                color: "#bbb",
+                color: "#444",
                 textTransform: "uppercase",
               }}
             >
@@ -203,54 +238,159 @@ export default function WorkGallery() {
         )}
       </div>
 
-      {/* Zoom overlay */}
+      {/* Gallery lightbox — opens on double-click */}
       <AnimatePresence>
-        {selectedStampId !== null &&
-          (() => {
-            const stamp = stamps.find((s) => s.id === selectedStampId);
-            if (!stamp) return null;
-            return (
+        {galleryOpen && (
+          <motion.div
+            key="gallery-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(10,10,10,0.97)",
+              zIndex: 100,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+            }}
+            onClick={() => setGalleryOpen(false)}
+          >
+            {/* Sliding image */}
+            <AnimatePresence custom={galleryDir} mode="popLayout">
               <motion.div
+                key={galleryIndex}
+                custom={galleryDir}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ type: "spring", stiffness: 300, damping: 35, mass: 0.8 }}
                 style={{
-                  position: "fixed",
-                  inset: 0,
-                  background: "rgba(255,255,255,0.96)",
-                  zIndex: 100,
+                  position: "absolute",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  width: "100%",
+                  height: "100%",
                 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedStampId(null)}
+                onClick={(e) => e.stopPropagation()}
               >
-                <motion.div
-                  layoutId={`stamp-${selectedStampId}`}
+                <img
+                  src={PHOTOS[galleryIndex].src}
+                  alt=""
                   style={{
-                    width: "min(85vw, 1100px)",
-                    height: "min(88vh, 1300px)",
+                    maxWidth: "min(85vw, 1100px)",
+                    maxHeight: "min(88vh, 1300px)",
+                    objectFit: "contain",
+                    display: "block",
+                    pointerEvents: "none",
+                    userSelect: "none",
                   }}
-                  transition={{ type: "spring", stiffness: 220, damping: 28 }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <img
-                    src={stamp.photo.src}
-                    alt=""
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                      display: "block",
-                      pointerEvents: "none",
-                      userSelect: "none",
-                    }}
-                    draggable={false}
-                  />
-                </motion.div>
+                  draggable={false}
+                />
               </motion.div>
-            );
-          })()}
+            </AnimatePresence>
+
+            {/* Prev arrow */}
+            <button
+              onClick={(e) => { e.stopPropagation(); navigate(-1); }}
+              style={{
+                position: "absolute",
+                left: 24,
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "none",
+                border: "none",
+                color: "#EDEAE3",
+                fontSize: 28,
+                cursor: "pointer",
+                padding: "12px 16px",
+                opacity: 0.6,
+                zIndex: 10,
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.6")}
+              aria-label="Previous"
+            >
+              ←
+            </button>
+
+            {/* Next arrow */}
+            <button
+              onClick={(e) => { e.stopPropagation(); navigate(1); }}
+              style={{
+                position: "absolute",
+                right: 24,
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "none",
+                border: "none",
+                color: "#EDEAE3",
+                fontSize: 28,
+                cursor: "pointer",
+                padding: "12px 16px",
+                opacity: 0.6,
+                zIndex: 10,
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.6")}
+              aria-label="Next"
+            >
+              →
+            </button>
+
+            {/* Close button */}
+            <button
+              onClick={() => setGalleryOpen(false)}
+              style={{
+                position: "absolute",
+                top: 20,
+                right: 24,
+                background: "none",
+                border: "none",
+                color: "#EDEAE3",
+                fontSize: 20,
+                cursor: "pointer",
+                padding: "8px 12px",
+                opacity: 0.5,
+                zIndex: 10,
+                letterSpacing: "0.1em",
+                fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.5")}
+              aria-label="Close gallery"
+            >
+              ✕
+            </button>
+
+            {/* Image counter */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: 24,
+                left: "50%",
+                transform: "translateX(-50%)",
+                color: "#6B6862",
+                fontSize: 11,
+                letterSpacing: "0.2em",
+                fontVariantNumeric: "tabular-nums",
+                fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
+                zIndex: 10,
+                pointerEvents: "none",
+              }}
+            >
+              {String(galleryIndex + 1).padStart(2, "0")} / {String(PHOTOS.length).padStart(2, "0")}
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Bottom chrome bar — Riss's branding */}
@@ -265,7 +405,7 @@ export default function WorkGallery() {
             alignItems: "center",
             justifyContent: "space-between",
             fontSize: 13,
-            color: "#111",
+            color: "#EDEAE3",
             zIndex: 45,
             pointerEvents: "auto",
             fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
@@ -280,7 +420,7 @@ export default function WorkGallery() {
               <span
                 key={label}
                 style={{
-                  color: i === 0 ? "#111" : "#999",
+                  color: i === 0 ? "#EDEAE3" : "#6B6862",
                   textDecoration: i === 0 ? "underline" : "none",
                   textUnderlineOffset: 3,
                   cursor: "default",
@@ -301,7 +441,7 @@ export default function WorkGallery() {
               fontVariantNumeric: "tabular-nums",
             }}
           >
-            <span style={{ color: "#999" }}>Threshold:</span>
+            <span style={{ color: "#6B6862" }}>Threshold:</span>
             <button
               onClick={() => {
                 const t = Math.max(2, threshold - 1);
@@ -314,7 +454,7 @@ export default function WorkGallery() {
                 border: "none",
                 cursor: "pointer",
                 fontSize: 13,
-                color: "#111",
+                color: "#EDEAE3",
                 padding: "0 4px",
               }}
             >
@@ -325,6 +465,7 @@ export default function WorkGallery() {
                 fontVariantNumeric: "tabular-nums",
                 minWidth: "4ch",
                 textAlign: "center",
+                color: "#EDEAE3",
               }}
             >
               {String(threshold).padStart(4, "0")}
@@ -340,7 +481,7 @@ export default function WorkGallery() {
                 border: "none",
                 cursor: "pointer",
                 fontSize: 13,
-                color: "#111",
+                color: "#EDEAE3",
                 padding: "0 4px",
               }}
             >
@@ -348,12 +489,12 @@ export default function WorkGallery() {
             </button>
           </div>
 
-          {/* Right: stamp counter */}
-          <span style={{ fontVariantNumeric: "tabular-nums", color: "#999" }}>
+          {/* Right: session stamp counter */}
+          <span style={{ fontVariantNumeric: "tabular-nums", color: "#6B6862" }}>
             {String(totalStamped).padStart(4, "0")} / {String(PHOTOS.length).padStart(4, "0")}
           </span>
         </div>
       )}
-    </LayoutGroup>
+    </>
   );
 }
