@@ -15,7 +15,20 @@ export const submitCopy = {
   title: "Send Files",
   intro:
     "For loop packs, samples, and creative submissions. Drop your files below — I'll review and respond within a few days.",
+  bookingTitle: "Book Me",
+  bookingIntro:
+    "DJ sets, creative direction, styling, and image consultation. Tell me about the project — I respond within a few days.",
   acceptedTypes: ".wav · .mp3 · .zip · max 500MB",
+  epkLabel: "Download press kit",
+  epkHref: "/epk.pdf",
+};
+
+export const listenCopy = {
+  caption: "LISTEN",
+  title: "Latest Mix",
+  trackArtist: "Riss",
+  trackTitle: "Untitled — Selected b-sides",
+  duration: "47:12",
 };
 
 export const creativeCopy = {

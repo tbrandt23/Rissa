@@ -22,7 +22,7 @@ export default function Dropzone() {
       }}
       onDragLeave={() => setActive(false)}
       onDrop={onDrop}
-      className={`block cursor-pointer border border-dashed px-6 py-16 md:py-20 text-center transition-colors duration-300 ${
+      className={`block cursor-pointer border border-dashed px-6 py-8 md:py-10 text-center transition-colors duration-300 ${
         active ? "border-foreground" : "border-border hover:border-muted"
       }`}
     >

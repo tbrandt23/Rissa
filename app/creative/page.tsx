@@ -1,4 +1,5 @@
 import CapabilitySection from "@/components/CapabilitySection";
+import FadeIn from "@/components/FadeIn";
 import { capabilities } from "@/content/capabilities";
 import { creativeCopy } from "@/content/copy";
 
@@ -20,7 +21,9 @@ export default function CreativePage() {
 
         <div>
           {capabilities.map((cap, i) => (
-            <CapabilitySection key={cap.number} cap={cap} priority={i === 0} />
+            <FadeIn key={cap.number}>
+              <CapabilitySection cap={cap} priority={i === 0} />
+            </FadeIn>
           ))}
         </div>
 
@@ -29,7 +32,7 @@ export default function CreativePage() {
             For portfolio inquiries —{" "}
             <a
               href={`mailto:${creativeCopy.contactEmail}`}
-              className="text-foreground transition-opacity duration-300 hover:opacity-60"
+              className="text-foreground link-underline"
             >
               {creativeCopy.contactEmail}
             </a>

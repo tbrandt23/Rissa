@@ -15,6 +15,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if('scrollRestoration' in history){history.scrollRestoration='manual';}",
+          }}
+        />
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link
           rel="stylesheet"
@@ -28,6 +34,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-background text-foreground">
+        {/* depth: warm vignette, no chromatic color */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-[90]"
+          style={{
+            background:
+              "radial-gradient(120% 120% at 50% 0%, transparent 55%, rgba(0,0,0,0.55) 100%)",
+          }}
+        />
+        {/* film grain */}
         <div
           aria-hidden="true"
           className="pointer-events-none fixed inset-0 z-[100] opacity-[0.035] mix-blend-overlay"
