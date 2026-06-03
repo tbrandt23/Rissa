@@ -110,34 +110,40 @@ export default function WorkGallery() {
     return () => obs.disconnect();
   }, []);
 
-  // Auto-scatter all photos on mobile when section activates
+  // Touch-to-stamp handler (mobile only)
   useEffect(() => {
     if (!isActive || !isMobile) return;
-    // Clear and re-scatter each time the section activates
-    setStamps([]);
-    setTotalStamped(0);
-    nextStampId.current = 0;
-    photoIndex.current = 0;
 
-    const timeouts: ReturnType<typeof setTimeout>[] = [];
-    PHOTOS.forEach((photo, i) => {
-      const t = setTimeout(() => {
-        const h = DISPLAY_HEIGHT * 0.45; // smaller on mobile
-        const w = h * photo.ar;
-        // keep images within viewport bounds
-        const x = w / 2 + Math.random() * (window.innerWidth - w);
-        const y = h / 2 + Math.random() * (window.innerHeight - h - 60); // leave room for chrome bar
-        const id = nextStampId.current++;
-        setStamps((prev) => {
-          const next = [...prev, { id, x, y, w, h, photo }];
-          return next.length > thresholdRef.current ? next.slice(-thresholdRef.current) : next;
-        });
-        setTotalStamped((t) => t + 1);
-      }, i * 180);
-      timeouts.push(t);
-    });
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastStampPos.current.x;
+      const dy = touch.clientY - lastStampPos.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < STAMP_DISTANCE) return;
 
-    return () => timeouts.forEach(clearTimeout);
+      lastStampPos.current = { x: touch.clientX, y: touch.clientY };
+
+      const photo = PHOTOS[photoIndex.current % PHOTOS.length];
+      photoIndex.current += 1;
+
+      const h = DISPLAY_HEIGHT * 0.45; // smaller on mobile
+      const w = h * photo.ar;
+
+      // No scatter offset on touch — stamp directly at finger position
+      const x = touch.clientX;
+      const y = touch.clientY;
+
+      const id = nextStampId.current++;
+
+      setStamps((prev) => {
+        const next = [...prev, { id, x, y, w, h, photo }];
+        return next.length > thresholdRef.current ? next.slice(-thresholdRef.current) : next;
+      });
+      setTotalStamped((t) => t + 1);
+    };
+
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    return () => window.removeEventListener("touchmove", handleTouchMove);
   }, [isActive, isMobile]);
 
   // Attach/detach mousemove listener based on isActive
@@ -302,7 +308,7 @@ export default function WorkGallery() {
               fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
             }}
           >
-            {isMobile ? "Tap any image to browse" : "Move mouse to explore · Double-click to open"}
+            {isMobile ? "Drag to stamp · Tap to open" : "Move mouse to explore · Double-click to open"}
           </p>
         </div>
       </div>
