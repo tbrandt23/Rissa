@@ -10,11 +10,9 @@ import { FormInput, FormTextarea } from "@/components/FormField";
 import LiveStatus from "@/components/LiveStatus";
 import HeroVideo from "@/components/HeroVideo";
 import AudioPlayer from "@/components/AudioPlayer";
-import { capabilities } from "@/content/capabilities";
 import { links } from "@/content/links";
 import {
   homeCopy,
-  creativeCopy,
   submitCopy,
   linksCopy,
   listenCopy,
@@ -253,29 +251,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WORK — carousel + inline contact line (no separate Contact section) */}
+      {/* WORK */}
       <section
         id="work"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 border-t border-border"
+        className="relative min-h-screen"
       >
-        <div className="mx-auto w-full max-w-6xl">
-          <div className="rise" style={{ transitionDelay: "120ms" }}>
-            <WorkGallery items={capabilities} label={creativeCopy.caption} />
-          </div>
-          <div
-            className="rise mt-5 md:mt-6 text-center font-sans font-light text-[12px] md:text-[13px] text-muted"
-            style={{ transitionDelay: "320ms" }}
-          >
-            For inquiries —{" "}
-            <a
-              href={`mailto:${creativeCopy.contactEmail}`}
-              className="text-foreground link-underline"
-            >
-              {creativeCopy.contactEmail}
-            </a>
-          </div>
-        </div>
+        <WorkGallery />
       </section>
     </>
   );
