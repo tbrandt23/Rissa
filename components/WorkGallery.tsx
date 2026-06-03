@@ -72,6 +72,14 @@ export default function WorkGallery() {
   const [totalStamped, setTotalStamped] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Preload all photos on mount so first stamps appear instantly with no network lag
+  useEffect(() => {
+    PHOTOS.forEach((p) => {
+      const img = new window.Image();
+      img.src = p.src;
+    });
+  }, []);
+
   // Gallery lightbox state
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
@@ -275,7 +283,7 @@ export default function WorkGallery() {
             style={{
               fontSize: 11,
               letterSpacing: "0.28em",
-              color: "rgba(237,234,227,0.4)",
+              color: "rgba(237,234,227,0.65)",
               textTransform: "uppercase",
               marginBottom: 10,
               fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
@@ -290,7 +298,7 @@ export default function WorkGallery() {
               fontSize: "clamp(52px, 8vw, 110px)",
               lineHeight: 0.92,
               letterSpacing: "-0.03em",
-              color: "rgba(237,234,227,0.18)",
+              color: "rgba(237,234,227,0.38)",
               margin: 0,
             }}
           >
@@ -303,7 +311,7 @@ export default function WorkGallery() {
               marginTop: 20,
               fontSize: 11,
               letterSpacing: "0.2em",
-              color: "rgba(237,234,227,0.3)",
+              color: "rgba(237,234,227,0.5)",
               textTransform: "uppercase",
               fontFamily: "Satoshi, ui-sans-serif, system-ui, sans-serif",
             }}
