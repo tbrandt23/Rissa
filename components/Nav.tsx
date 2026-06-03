@@ -28,8 +28,7 @@ export default function Nav() {
       <div className="pointer-events-auto flex gap-5 md:gap-6 font-sans text-[12px] md:text-[13px]">
         {navItems.map((item) => {
           const active = pathname === item.href;
-          const isSubmit = item.href === "/submit";
-          const base = isSubmit ? "text-foreground" : "text-muted";
+          const base = "text-foreground/70";
           return (
             <Link
               key={item.href}
