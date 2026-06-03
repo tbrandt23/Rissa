@@ -164,7 +164,7 @@ export default function HomePage() {
       <section
         id="submit"
         data-snap
-        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-14 border-t border-border"
+        className="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-20 py-14 border-t border-border overflow-y-auto"
       >
         <div className="mx-auto w-full max-w-2xl">
           <div className="rise" style={{ transitionDelay: "0ms" }}>
