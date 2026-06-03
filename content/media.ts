@@ -18,13 +18,11 @@
 //   1. Drop .mp4 files into  public/videos/  named  hero-1.mp4 ... hero-4.mp4
 //   2. Point the slots below at "/videos/hero-1.mp4" etc. — nothing else to do.
 export const heroVideos = [
-  // 1. hand DJing / decks — close-up of deejay hands performing a mix (Pexels 4043972)
-  "https://videos.pexels.com/video-files/4043972/4043972-hd_1920_1080_24fps.mp4",
-  // 2. dim studio — recording studio with advanced equipment (Pexels 3910618)
+  // 1. dim studio — recording studio with advanced equipment (Pexels 3910618)
   "https://videos.pexels.com/video-files/3910618/3910618-hd_1920_1080_25fps.mp4",
-  // 3. model with flash photography — model + photographer photoshoot (Pexels 3917516)
+  // 2. model with flash photography — model + photographer photoshoot (Pexels 3917516)
   "https://videos.pexels.com/video-files/3917516/3917516-uhd_2732_1440_25fps.mp4",
-  // 4. person working on a computer — working in a dim room on a laptop (Pexels 20563164)
+  // 3. person working on a computer — working in a dim room on a laptop (Pexels 20563164)
   "https://videos.pexels.com/video-files/20563164/20563164-hd_1920_1080_30fps.mp4",
 ];
 
